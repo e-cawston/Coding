@@ -453,6 +453,17 @@ library(ggrepel)
 # Extract correlations between biological replicates
 replicate_cors <- correlation_stats %>%
   filter(comparison_type == "Biological replicates") %>%
+  # Remove duplicate comparisons by keeping only one direction
+  # Sort sample names alphabetically and keep first occurrence
+  rowwise() %>%
+  mutate(
+    sample_min = min(sample1, sample2),
+    sample_max = max(sample1, sample2),
+    comparison_key = paste(sample_min, sample_max, sep = "_vs_")
+  ) %>%
+  ungroup() %>%
+  distinct(comparison_key, .keep_all = TRUE) %>%
+  select(-sample_min, -sample_max, -comparison_key) %>%
   arrange(pearson_cor) %>%
   mutate(
     pair_label = paste(sample1, "vs", sample2),
@@ -461,14 +472,15 @@ replicate_cors <- correlation_stats %>%
   )
 
 cat("\n=== BIOLOGICAL REPLICATE CORRELATIONS ===\n")
-cat("Number of replicate pairs:", nrow(replicate_cors), "\n")
+cat("Number of unique replicate pairs:", nrow(replicate_cors), "\n")
 cat("Mean correlation:", round(mean(replicate_cors$pearson_cor), 3), "\n")
 cat("Median correlation:", round(median(replicate_cors$pearson_cor), 3), "\n")
 cat("Min correlation:", round(min(replicate_cors$pearson_cor), 3), "\n")
 cat("Max correlation:", round(max(replicate_cors$pearson_cor), 3), "\n\n")
 
 # Check for any low-quality replicates (correlation < 0.9)
-low_cor_reps <- replicate_cors %>% filter(pearson_cor < 0.9)
+low_cor_reps <- replicate_cors %>%
+  filter(pearson_cor < 0.9)
 
 if (nrow(low_cor_reps) > 0) {
   cat("WARNING: Found", nrow(low_cor_reps), "replicate pairs with correlation < 0.9:\n")
@@ -493,15 +505,15 @@ ggplot(replicate_cors, aes(x = reorder(short_label, pearson_cor), y = pearson_co
     hjust = 0
   ) +
   scale_color_gradient2(
-    low = "#d73027", 
-    mid = "#fee090", 
+    low = "#d73027",
+    mid = "#fee090",
     high = "#1a9850",
     midpoint = 0.95,
     name = "Correlation"
   ) +
   labs(
     title = "Biological Replicate Correlations",
-    subtitle = "Dashed line indicates correlation = 0.9",
+    subtitle = "Dashed line indicates correlation = 0.9 (duplicate pairs removed)",
     x = "",
     y = "Pearson Correlation"
   ) +
@@ -515,7 +527,7 @@ ggplot(replicate_cors, aes(x = reorder(short_label, pearson_cor), y = pearson_co
   ) +
   coord_cartesian(ylim = c(0.5, 1))
 
-ggsave(here("Analysis/Data/Figures/replicate_correlations_labeled.pdf"),
+ggsave(here("Analysis/Data/Figures/replicate_correlations_labeled.pdf"), 
        width = 14, height = 8)
 
 # Create an alternative horizontal version for better readability
@@ -524,18 +536,18 @@ ggplot(replicate_cors, aes(y = reorder(short_label, pearson_cor), x = pearson_co
   geom_vline(xintercept = 0.9, linetype = "dashed", color = "blue", linewidth = 1) +
   geom_segment(aes(x = 0.5, xend = pearson_cor, 
                    y = short_label, yend = short_label, 
-                   color = pearson_cor),
+                   color = pearson_cor), 
                linewidth = 1, alpha = 0.5) +
   scale_color_gradient2(
-    low = "#d73027", 
-    mid = "#fee090", 
+    low = "#d73027",
+    mid = "#fee090",
     high = "#1a9850",
     midpoint = 0.95,
     name = "Correlation"
   ) +
   labs(
     title = "Biological Replicate Correlations",
-    subtitle = "Dashed line indicates correlation = 0.9",
+    subtitle = "Dashed line indicates correlation = 0.9 (duplicate pairs removed)",
     y = "Sample Pair",
     x = "Pearson Correlation"
   ) +
@@ -548,7 +560,7 @@ ggplot(replicate_cors, aes(y = reorder(short_label, pearson_cor), x = pearson_co
   ) +
   coord_cartesian(xlim = c(0.5, 1))
 
-ggsave(here("Analysis/Data/Figures/replicate_correlations_horizontal.pdf"),
+ggsave(here("Analysis/Data/Figures/replicate_correlations_horizontal.pdf"), 
        width = 12, height = max(8, nrow(replicate_cors) * 0.2))
 
 # Create a detailed table of replicate correlations
@@ -557,7 +569,7 @@ replicate_table <- replicate_cors %>%
   arrange(pearson_cor)
 
 write_csv(
-  replicate_table, 
+  replicate_table,
   here("Analysis/Data/replicate_correlations_table.csv")
 )
 

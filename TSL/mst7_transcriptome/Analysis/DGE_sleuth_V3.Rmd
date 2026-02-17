@@ -39,7 +39,7 @@ s2c <- s2c %>%
 do_DGE_one <- function(s2c_tp, control, condition_label,
                        t2g = NULL,
                        aggregation_column = NULL,
-                       out_dir = "Analysis/data/DGE") {
+                       out_dir = "Analysis/Data/DGE") {
   s2c_tp <- s2c_tp %>%
     mutate(name = droplevels(factor(name))) %>%
     mutate(name = relevel(name, ref = control))
@@ -113,7 +113,7 @@ run_experiment <- function(s2c_all,
                            exclude_from_tests = character(),
                            t2g = NULL,
                            aggregation_column = NULL,
-                           out_dir = "Analysis/data/DGE") {
+                           out_dir = "Analysis/Data/DGE") {
 
   message(">> Running ", experiment_label, "   (control = ", control_name, ")")
 
@@ -177,10 +177,10 @@ aggregation_column <- NULL
 # adjusting for experiment as a covariate.
 run_cross_experiment <- function(s2c_all,
                                  cond_A, exp_A,          # e.g., "pmk1", "Exp2"  (treated as control)
-                                 cond_B, exp_B,          # e.g., "MST7PM", "Exp1"
+                                 cond_B, exp_B,          # e.g., "mst7", "Exp1"
                                  t2g = NULL,
                                  aggregation_column = NULL,
-                                 out_dir = "Analysis/data/DGE") {
+                                 out_dir = "Analysis/Data/DGE") {
   message(">> Cross-experiment: ", cond_B, " (", exp_B, ") vs ", cond_A, " (", exp_A, ")")
 
   # Subset to only the two conditions and their specified experiments
@@ -285,8 +285,9 @@ run_cross_experiment <- function(s2c_all,
 
 ```
 
-# Run analyses
+# Run analyses within each experiment
 ```{r}
+#All Exp1 against Guy11
 run_experiment(s2c,
                experiment_label = "Exp1",
                control_name = "Guy11",
@@ -297,6 +298,8 @@ gc()
 closeAllConnections()
 Sys.sleep(2)
 
+
+#All Exp1 against MST7WT
 run_experiment(s2c,
                experiment_label = "Exp1",
                control_name = "MST7WT",
@@ -307,6 +310,40 @@ gc()
 closeAllConnections()
 Sys.sleep(2)
 
+#All Exp1 against mst7
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "mst7",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp1 against MST7PM
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "MST7PM",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp1 against MST7PD
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "MST7PD",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp2 against Guy11M
 run_experiment(s2c,
                experiment_label = "Exp2",
                control_name = "Guy11M",
@@ -324,7 +361,7 @@ run_cross_experiment(
   cond_B = "mst7", exp_B = "Exp1",
   t2g = t2g,
   aggregation_column = aggregation_column,
-  out_dir = "Analysis/data/DGE"
+  out_dir = "Analysis/Data/DGE"
 )
 
 # Optional: pmk1 (Exp2) vs MST7WT (Exp1)
@@ -334,7 +371,7 @@ run_cross_experiment(
 #   cond_B = "MST7WT", exp_B = "Exp1",
 #   t2g = t2g,
 #   aggregation_column = aggregation_column,
-#   out_dir = "Analysis/data/DGE"
+#   out_dir = "Analysis/Data/DGE"
 # )
 ```
 
