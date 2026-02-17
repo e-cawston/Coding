@@ -1,0 +1,633 @@
+---
+title: "Cross-Sample Correlation Matrix from Kallisto TPM"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE, 
+                      fig.width = 12, fig.height = 10)
+```
+
+# Load Libraries
+```{r}
+library(tidyverse)
+library(pheatmap)
+library(RColorBrewer)
+library(corrplot)
+library(here)
+
+# Create output directory
+dir.create(here("Analysis/Data/tpm_correlation_analysis"), recursive = TRUE, showWarnings = FALSE)
+```
+
+# 1. Load Sample Metadata
+
+```{r}
+# Load the sample metadata
+sample_metadata <- read_csv(here("Raw/results/run_metadata.txt"), show_col_types = FALSE)
+
+# Create a clean sample ID for labeling
+sample_metadata <- sample_metadata %>%
+  mutate(
+    sample_id = paste(name, timepoint, biorep, sep = "_"),
+    timepoint_label = paste0(timepoint, "H"),
+    path = file.path("Raw/results", path)
+  )
+
+cat("Total samples:", nrow(sample_metadata), "\n")
+print(sample_metadata)
+```
+
+# 2. Load TPM Data from Kallisto
+
+```{r}
+# Function to load kallisto abundance.tsv file
+load_kallisto_tpm <- function(file_path, sample_name) {
+  if (file.exists(file_path)) {
+    df <- read_tsv(file_path, show_col_types = FALSE) %>%
+      select(target_id, tpm) %>%
+      rename(!!sample_name := tpm)
+    return(df)
+  } else {
+    warning(paste("File not found:", file_path))
+    return(NULL)
+  }
+}
+
+# Load all TPM data
+tpm_list <- list()
+
+for (i in 1:nrow(sample_metadata)) {
+  sample_id <- sample_metadata$sample_id[i]
+  file_path <- here(sample_metadata$path[i])
+  
+  tpm_data <- load_kallisto_tpm(file_path, sample_id)
+  
+  if (!is.null(tpm_data)) {
+    tpm_list[[sample_id]] <- tpm_data
+    cat("Loaded:", sample_id, "from", file_path, "\n")
+  }
+}
+
+# Check how many samples were loaded
+cat("\nSuccessfully loaded", length(tpm_list), "out of", nrow(sample_metadata), "samples\n")
+
+# If no samples loaded, print error
+if (length(tpm_list) == 0) {
+  stop("!!! NO SAMPLES LOADED !!! Please check your file paths.")
+}
+```
+
+# 3. Create TPM Matrix
+
+```{r}
+# Merge all TPM data into a single wide matrix
+tpm_matrix <- tpm_list %>%
+  reduce(full_join, by = "target_id") %>%
+  column_to_rownames("target_id") %>%
+  as.matrix()
+
+cat("TPM matrix dimensions:", nrow(tpm_matrix), "genes x", ncol(tpm_matrix), "samples\n")
+cat("First few rows and columns:\n")
+print(tpm_matrix[1:5, 1:min(5, ncol(tpm_matrix))])
+
+# Save the TPM matrix
+write.csv(tpm_matrix, here("Analysis/Data/tpm_matrix_all_samples.csv"))
+```
+
+# 4. Filter Low Expression Genes (Optional but Recommended)
+
+```{r}
+# Filter genes with very low expression across all samples
+# This reduces noise in correlation analysis
+
+# Keep genes with mean TPM > 1
+mean_tpm <- rowMeans(tpm_matrix, na.rm = TRUE)
+tpm_filtered <- tpm_matrix[mean_tpm > 1, ]
+
+cat("After filtering (mean TPM > 1):\n")
+cat("Genes retained:", nrow(tpm_filtered), "out of", nrow(tpm_matrix), "\n")
+cat("Percentage retained:", round(100 * nrow(tpm_filtered) / nrow(tpm_matrix), 1), "%\n")
+```
+
+# 5. Log-Transform TPM Values
+
+```{r}
+# Log2 transformation (add pseudocount to avoid log(0))
+tpm_log2 <- log2(tpm_filtered + 1)
+
+cat("Log2-transformed TPM matrix dimensions:", 
+    nrow(tpm_log2), "genes x", ncol(tpm_log2), "samples\n")
+```
+# 6. Calculate Correlation Matrix
+
+```{r}
+# Calculate Pearson correlation between all samples
+cor_matrix_pearson <- cor(tpm_log2, use = "pairwise.complete.obs", method = "pearson")
+
+# Calculate Spearman correlation
+cor_matrix_spearman <- cor(tpm_log2, use = "pairwise.complete.obs", method = "spearman")
+
+cat("\n=== PEARSON CORRELATION MATRIX (first 5x5) ===\n")
+print(round(cor_matrix_pearson[1:5, 1:5], 3))
+
+cat("\n=== SPEARMAN CORRELATION MATRIX (first 5x5) ===\n")
+print(round(cor_matrix_spearman[1:5, 1:5], 3))
+
+# Calculate summary statistics
+cat("\n=== CORRELATION SUMMARY STATISTICS ===\n")
+cat("Pearson correlations:\n")
+cat("  Mean:", round(mean(cor_matrix_pearson[upper.tri(cor_matrix_pearson)]), 3), "\n")
+cat("  Median:", round(median(cor_matrix_pearson[upper.tri(cor_matrix_pearson)]), 3), "\n")
+cat("  Range:", round(min(cor_matrix_pearson[upper.tri(cor_matrix_pearson)]), 3), "-", 
+    round(max(cor_matrix_pearson[upper.tri(cor_matrix_pearson)]), 3), "\n")
+
+# Save correlation matrices
+write.csv(cor_matrix_pearson, 
+          here("Analysis/Data/correlation_matrix_pearson_tpm.csv"))
+write.csv(cor_matrix_spearman, 
+          here("Analysis/Data/correlation_matrix_spearman_tpm.csv"))
+```
+
+# 7. Create Annotation for Heatmap
+
+```{r}
+# Create annotation dataframe from sample information
+annotation_df <- sample_metadata %>%
+  filter(sample_id %in% colnames(cor_matrix_pearson)) %>%
+  select(sample_id, name, timepoint_label) %>%
+  column_to_rownames("sample_id")
+
+# Reorder to match correlation matrix
+annotation_df <- annotation_df[colnames(cor_matrix_pearson), ]
+
+# Define colors for annotation (no strain_group)
+ann_colors <- list(
+  name = c(
+    Guy11 = "#1b9e77", 
+    Guy11M = "#d95f02",
+    mst7 = "#7570b3", 
+    pmk1 = "#e7298a",
+    MST7WT = "#66a61e",
+    MST7PM = "#e6ab02",
+    MST7PD = "#a6761d"
+  ),
+  timepoint_label = c(
+    "0H" = "#ffffcc", 
+    "2H" = "#a1dab4", 
+    "4H" = "#41b6c4", 
+    "24H" = "#225ea8"
+  )
+)
+
+cat("Annotation prepared for", nrow(annotation_df), "samples\n")
+```
+
+# 8. Visualize Correlation Matrix - Heatmap
+
+```{r, fig.width=16, fig.height=14}
+# Pearson correlation heatmap
+pheatmap(
+  cor_matrix_pearson,
+  color = colorRampPalette(c("#313695", "#4575b4", "#74add1", 
+                             "#abd9e9", "#e0f3f8", "#ffffbf",
+                             "#fee090", "#fdae61", "#f46d43", 
+                             "#d73027", "#a50026"))(100),
+  breaks = seq(0.5, 1, length.out = 101),
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  annotation_row = annotation_df,
+  annotation_col = annotation_df,
+  annotation_colors = ann_colors,
+  show_rownames = TRUE,
+  show_colnames = TRUE,
+  fontsize = 7,
+  fontsize_row = 6,
+  fontsize_col = 6,
+  main = "Sample Correlation Matrix - Pearson (Log2 TPM)",
+  filename = here("Analysis/Data/Figures/correlation_heatmap_pearson_tpm.pdf"),
+  width = 16,
+  height = 14
+)
+
+# Spearman correlation heatmap
+pheatmap(
+  cor_matrix_spearman,
+  color = colorRampPalette(c("#313695", "#4575b4", "#74add1", 
+                             "#abd9e9", "#e0f3f8", "#ffffbf",
+                             "#fee090", "#fdae61", "#f46d43", 
+                             "#d73027", "#a50026"))(100),
+  breaks = seq(0.5, 1, length.out = 101),
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  annotation_row = annotation_df,
+  annotation_col = annotation_df,
+  annotation_colors = ann_colors,
+  show_rownames = TRUE,
+  show_colnames = TRUE,
+  fontsize = 7,
+  fontsize_row = 6,
+  fontsize_col = 6,
+  main = "Sample Correlation Matrix - Spearman (Log2 TPM)",
+  filename = here("Analysis/Data/Figures/correlation_heatmap_spearman_tpm.pdf"),
+  width = 16,
+  height = 14
+)
+
+cat("\nCorrelation heatmaps saved!\n")
+```
+
+# 9. Alternative Visualization - Corrplot
+
+```{r, fig.width=16, fig.height=16}
+# Create a correlation plot with corrplot package
+pdf(here("Analysis/Data/Figures/corrplot_pearson_tpm.pdf"), width = 16, height = 16)
+corrplot(
+  cor_matrix_pearson, 
+  method = "color",
+  type = "full",
+  order = "hclust",
+  tl.col = "black",
+  tl.cex = 0.6,
+  cl.cex = 0.8,
+  col = colorRampPalette(c("#313695", "#4575b4", "#abd9e9", 
+                           "#ffffbf", "#fdae61", "#d73027", 
+                           "#a50026"))(200),
+  title = "Sample Correlation - Pearson (Log2 TPM)",
+  mar = c(0,0,2,0)
+)
+dev.off()
+
+pdf(here("Analysis/Data/Figures/corrplot_spearman_tpm.pdf"), width = 16, height = 16)
+corrplot(
+  cor_matrix_spearman, 
+  method = "color",
+  type = "full",
+  order = "hclust",
+  tl.col = "black",
+  tl.cex = 0.6,
+  cl.cex = 0.8,
+  col = colorRampPalette(c("#313695", "#4575b4", "#abd9e9", 
+                           "#ffffbf", "#fdae61", "#d73027", 
+                           "#a50026"))(200),
+  title = "Sample Correlation - Spearman (Log2 TPM)",
+  mar = c(0,0,2,0)
+)
+dev.off()
+
+cat("Corrplot visualizations saved!\n")
+```
+
+# 10. Correlation Statistics by Group
+
+```{r}
+# Create pairwise comparison dataframe
+correlation_stats <- expand.grid(
+  sample1 = colnames(cor_matrix_pearson),
+  sample2 = colnames(cor_matrix_pearson),
+  stringsAsFactors = FALSE
+) %>%
+  filter(sample1 != sample2) %>%
+  left_join(sample_metadata %>% select(sample_id, name, timepoint, biorep), 
+            by = c("sample1" = "sample_id")) %>%
+  rename(name1 = name, time1 = timepoint, rep1 = biorep) %>%
+  left_join(sample_metadata %>% select(sample_id, name, timepoint, biorep), 
+            by = c("sample2" = "sample_id")) %>%
+  rename(name2 = name, time2 = timepoint, rep2 = biorep) %>%
+  mutate(
+    pearson_cor = map2_dbl(sample1, sample2, ~cor_matrix_pearson[.x, .y]),
+    spearman_cor = map2_dbl(sample1, sample2, ~cor_matrix_spearman[.x, .y]),
+    comparison_type = case_when(
+      name1 == name2 & time1 == time2 & rep1 != rep2 ~ "Biological replicates",
+      name1 == name2 & time1 != time2 ~ "Same strain, different time",
+      name1 != name2 & time1 == time2 ~ "Different strain, same time",
+      TRUE ~ "Different strains, different time"
+    )
+  )
+
+# Summary statistics
+correlation_summary <- correlation_stats %>%
+  group_by(comparison_type) %>%
+  summarise(
+    n_comparisons = n(),
+    mean_pearson = mean(pearson_cor, na.rm = TRUE),
+    median_pearson = median(pearson_cor, na.rm = TRUE),
+    sd_pearson = sd(pearson_cor, na.rm = TRUE),
+    min_pearson = min(pearson_cor, na.rm = TRUE),
+    max_pearson = max(pearson_cor, na.rm = TRUE),
+    mean_spearman = mean(spearman_cor, na.rm = TRUE),
+    median_spearman = median(spearman_cor, na.rm = TRUE)
+  ) %>%
+  arrange(desc(mean_pearson))
+
+cat("\n=== CORRELATION SUMMARY BY COMPARISON TYPE ===\n")
+print(correlation_summary)
+
+write_csv(
+  correlation_summary, 
+  here("Analysis/Data/correlation_summary_by_type_tpm.csv")
+)
+write_csv(
+  correlation_stats,
+  here("Analysis/Data/pairwise_correlations_detailed_tpm.csv")
+)
+```
+
+# 11. Visualize Correlation Distribution
+
+```{r, fig.width=14, fig.height=8}
+library(ggrepel)
+
+# Create labels for points
+correlation_stats <- correlation_stats %>%
+  mutate(point_label = paste0(sample1, " vs ", sample2))
+
+# Boxplot of correlations by comparison type with labeled points
+ggplot(correlation_stats, aes(x = reorder(comparison_type, -pearson_cor), 
+                              y = pearson_cor, fill = comparison_type)) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.4, size = 1.5) +
+  geom_text_repel(
+    aes(label = point_label),
+    size = 2,
+    max.overlaps = 20,
+    box.padding = 0.3,
+    point.padding = 0.2,
+    segment.size = 0.2,
+    segment.alpha = 0.5
+  ) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Distribution of Sample Correlations (Pearson) - Log2 TPM Data",
+    subtitle = paste0("Based on ", nrow(tpm_log2), " filtered genes (mean TPM > 1)"),
+    x = "Comparison Type",
+    y = "Pearson Correlation",
+    fill = "Comparison Type"
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 14)
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
+ggsave(here("Analysis/Data/Figures/correlation_distribution_boxplot_tpm.pdf"),
+       width = 14, height = 8)
+
+# Save a version with fewer labels (only outliers and extreme values)
+correlation_stats_labeled <- correlation_stats %>%
+  group_by(comparison_type) %>%
+  mutate(
+    is_outlier = pearson_cor < (quantile(pearson_cor, 0.25) - 1.5 * IQR(pearson_cor)) |
+                 pearson_cor > (quantile(pearson_cor, 0.75) + 1.5 * IQR(pearson_cor)),
+    is_extreme = pearson_cor < quantile(pearson_cor, 0.05) | 
+                 pearson_cor > quantile(pearson_cor, 0.95)
+  ) %>%
+  ungroup()
+
+ggplot(correlation_stats_labeled, aes(x = reorder(comparison_type, -pearson_cor), 
+                                       y = pearson_cor, fill = comparison_type)) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.4, size = 1.5) +
+  geom_text_repel(
+    data = correlation_stats_labeled %>% filter(is_outlier | is_extreme),
+    aes(label = point_label),
+    size = 2.5,
+    max.overlaps = 30,
+    box.padding = 0.5,
+    point.padding = 0.3,
+    segment.size = 0.3,
+    segment.alpha = 0.6,
+    min.segment.length = 0
+  ) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Distribution of Sample Correlations (Pearson) - Outliers Labeled",
+    subtitle = paste0("Based on ", nrow(tpm_log2), " filtered genes (mean TPM > 1)"),
+    x = "Comparison Type",
+    y = "Pearson Correlation",
+    fill = "Comparison Type"
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 14)
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
+ggsave(here("Analysis/Data/Figures/correlation_distribution_boxplot_outliers_labeled.pdf"),
+       width = 14, height = 8)
+
+# Boxplot of correlations by comparison type WITHOUT labels
+ggplot(correlation_stats, aes(x = reorder(comparison_type, -pearson_cor), 
+                              y = pearson_cor, fill = comparison_type)) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.4, size = 1.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Distribution of Sample Correlations (Pearson) - No Labels",
+    subtitle = paste0("Based on ", nrow(tpm_log2), " filtered genes (mean TPM > 1)"),
+    x = "Comparison Type",
+    y = "Pearson Correlation",
+    fill = "Comparison Type"
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 14)
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
+ggsave(here("Analysis/Data/Figures/correlation_distribution_boxplot_tpm_nolabels.pdf"),
+       width = 14, height = 8)
+```
+
+# 12. Replicate Quality Check
+
+```{r, fig.width=14, fig.height=8}
+library(ggrepel)
+
+# Extract correlations between biological replicates
+replicate_cors <- correlation_stats %>%
+  filter(comparison_type == "Biological replicates") %>%
+  arrange(pearson_cor) %>%
+  mutate(
+    pair_label = paste(sample1, "vs", sample2),
+    # Create a shorter label showing strain and timepoint
+    short_label = paste0(name1, "_", time1, "H (r", rep1, " vs r", rep2, ")")
+  )
+
+cat("\n=== BIOLOGICAL REPLICATE CORRELATIONS ===\n")
+cat("Number of replicate pairs:", nrow(replicate_cors), "\n")
+cat("Mean correlation:", round(mean(replicate_cors$pearson_cor), 3), "\n")
+cat("Median correlation:", round(median(replicate_cors$pearson_cor), 3), "\n")
+cat("Min correlation:", round(min(replicate_cors$pearson_cor), 3), "\n")
+cat("Max correlation:", round(max(replicate_cors$pearson_cor), 3), "\n\n")
+
+# Check for any low-quality replicates (correlation < 0.9)
+low_cor_reps <- replicate_cors %>% filter(pearson_cor < 0.9)
+
+if (nrow(low_cor_reps) > 0) {
+  cat("WARNING: Found", nrow(low_cor_reps), "replicate pairs with correlation < 0.9:\n")
+  print(low_cor_reps %>% select(sample1, sample2, pearson_cor))
+} else {
+  cat("All biological replicates have correlation >= 0.9\n")
+}
+
+# Visualize replicate correlations with all points labeled
+ggplot(replicate_cors, aes(x = reorder(short_label, pearson_cor), y = pearson_cor)) +
+  geom_point(aes(color = pearson_cor), size = 3) +
+  geom_hline(yintercept = 0.9, linetype = "dashed", color = "blue", linewidth = 1) +
+  geom_text_repel(
+    aes(label = short_label),
+    size = 2.5,
+    max.overlaps = Inf,
+    box.padding = 0.5,
+    point.padding = 0.3,
+    segment.size = 0.2,
+    segment.alpha = 0.5,
+    direction = "both",
+    hjust = 0
+  ) +
+  scale_color_gradient2(
+    low = "#d73027", 
+    mid = "#fee090", 
+    high = "#1a9850",
+    midpoint = 0.95,
+    name = "Correlation"
+  ) +
+  labs(
+    title = "Biological Replicate Correlations",
+    subtitle = "Dashed line indicates correlation = 0.9",
+    x = "",
+    y = "Pearson Correlation"
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 11),
+    legend.position = "right"
+  ) +
+  coord_cartesian(ylim = c(0.5, 1))
+
+ggsave(here("Analysis/Data/Figures/replicate_correlations_labeled.pdf"),
+       width = 14, height = 8)
+
+# Create an alternative horizontal version for better readability
+ggplot(replicate_cors, aes(y = reorder(short_label, pearson_cor), x = pearson_cor)) +
+  geom_point(aes(color = pearson_cor), size = 3) +
+  geom_vline(xintercept = 0.9, linetype = "dashed", color = "blue", linewidth = 1) +
+  geom_segment(aes(x = 0.5, xend = pearson_cor, 
+                   y = short_label, yend = short_label, 
+                   color = pearson_cor),
+               linewidth = 1, alpha = 0.5) +
+  scale_color_gradient2(
+    low = "#d73027", 
+    mid = "#fee090", 
+    high = "#1a9850",
+    midpoint = 0.95,
+    name = "Correlation"
+  ) +
+  labs(
+    title = "Biological Replicate Correlations",
+    subtitle = "Dashed line indicates correlation = 0.9",
+    y = "Sample Pair",
+    x = "Pearson Correlation"
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.y = element_text(size = 7),
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 11),
+    legend.position = "right"
+  ) +
+  coord_cartesian(xlim = c(0.5, 1))
+
+ggsave(here("Analysis/Data/Figures/replicate_correlations_horizontal.pdf"),
+       width = 12, height = max(8, nrow(replicate_cors) * 0.2))
+
+# Create a detailed table of replicate correlations
+replicate_table <- replicate_cors %>%
+  select(sample1, sample2, name1, time1, rep1, rep2, pearson_cor, spearman_cor) %>%
+  arrange(pearson_cor)
+
+write_csv(
+  replicate_table, 
+  here("Analysis/Data/replicate_correlations_table.csv")
+)
+
+cat("\nReplicate correlation table saved!\n")
+```
+
+# 13. PCA Plot for Visual Quality Check
+
+```{r, fig.width=12, fig.height=8}
+# Perform PCA on log2-transformed TPM
+pca_result <- prcomp(t(tpm_log2), scale. = TRUE)
+
+# Extract PC scores
+pca_data <- as.data.frame(pca_result$x[, 1:5]) %>%
+  rownames_to_column("sample_id") %>%
+  left_join(sample_metadata, by = "sample_id")
+
+# Calculate variance explained
+var_explained <- summary(pca_result)$importance[2, ] * 100
+
+# PCA plot - PC1 vs PC2
+p1 <- ggplot(pca_data, aes(x = PC1, y = PC2, color = name, shape = timepoint_label)) +
+  geom_point(size = 4, alpha = 0.8) +
+  scale_color_manual(values = ann_colors$name) +
+  labs(
+    title = "PCA of Log2 TPM Expression Data",
+    x = paste0("PC1 (", round(var_explained[1], 1), "% variance)"),
+    y = paste0("PC2 (", round(var_explained[2], 1), "% variance)"),
+    color = "Strain",
+    shape = "Timepoint"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "right"
+  )
+
+print(p1)
+ggsave(here("Analysis/Data/Figures/PCA_plot_PC1_PC2.pdf"),
+       width = 12, height = 8)
+
+# PCA plot - PC2 vs PC3
+p2 <- ggplot(pca_data, aes(x = PC2, y = PC3, color = name, shape = timepoint_label)) +
+  geom_point(size = 4, alpha = 0.8) +
+  scale_color_manual(values = ann_colors$name) +
+  labs(
+    title = "PCA of Log2 TPM Expression Data",
+    x = paste0("PC2 (", round(var_explained[2], 1), "% variance)"),
+    y = paste0("PC3 (", round(var_explained[3], 1), "% variance)"),
+    color = "Strain",
+    shape = "Timepoint"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "right"
+  )
+
+print(p2)
+ggsave(here("Analysis/Data/Figures/PCA_plot_PC2_PC3.pdf"),
+       width = 12, height = 8)
+
+cat("\nPCA analysis complete!\n")
+cat("PC1 explains", round(var_explained[1], 1), "% of variance\n")
+cat("PC2 explains", round(var_explained[2], 1), "% of variance\n")
+cat("PC3 explains", round(var_explained[3], 1), "% of variance\n")
+```
+
+# 14. Session Info
+
+```{r}
+sessionInfo()
+```
