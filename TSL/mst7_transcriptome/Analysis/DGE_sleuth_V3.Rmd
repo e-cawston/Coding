@@ -39,7 +39,7 @@ s2c <- s2c %>%
 do_DGE_one <- function(s2c_tp, control, condition_label,
                        t2g = NULL,
                        aggregation_column = NULL,
-                       out_dir = "Analysis/Data/DGE") {
+                       out_dir = here("Analysis/Data/DGE")) {
   s2c_tp <- s2c_tp %>%
     mutate(name = droplevels(factor(name))) %>%
     mutate(name = relevel(name, ref = control))
@@ -113,7 +113,7 @@ run_experiment <- function(s2c_all,
                            exclude_from_tests = character(),
                            t2g = NULL,
                            aggregation_column = NULL,
-                           out_dir = "Analysis/Data/DGE") {
+                           out_dir = here("Analysis/Data/DGE")) {
 
   message(">> Running ", experiment_label, "   (control = ", control_name, ")")
 
@@ -172,118 +172,7 @@ t2g <- NULL
 aggregation_column <- NULL
 ```
 
-```{r cross experiment helper}
-# Cross-experiment comparison: condition A (in exp_A) vs condition B (in exp_B),
-# adjusting for experiment as a covariate.
-run_cross_experiment <- function(s2c_all,
-                                 cond_A, exp_A,          # e.g., "pmk1", "Exp2"  (treated as control)
-                                 cond_B, exp_B,          # e.g., "mst7", "Exp1"
-                                 t2g = NULL,
-                                 aggregation_column = NULL,
-                                 out_dir = "Analysis/Data/DGE") {
-  message(">> Cross-experiment: ", cond_B, " (", exp_B, ") vs ", cond_A, " (", exp_A, ")")
 
-  # Subset to only the two conditions and their specified experiments
-  s2c_sub <- s2c_all %>%
-    filter((name == cond_A & experiment == exp_A) |
-           (name == cond_B & experiment == exp_B)) %>%
-    droplevels()
-
-  if (nrow(s2c_sub) == 0) {
-    warning("No samples found for the requested cross-experiment comparison.")
-    return(invisible(NULL))
-  }
-
-  # Timepoints present in BOTH groups
-  tps_A <- s2c_sub %>% filter(name == cond_A) %>% pull(timepoint) %>% unique() %>% as.character()
-  tps_B <- s2c_sub %>% filter(name == cond_B) %>% pull(timepoint) %>% unique() %>% as.character()
-  common_tps <- intersect(tps_A, tps_B)
-
-  if (length(common_tps) == 0) {
-    warning("No shared timepoints between ", cond_A, " (", exp_A, ") and ", cond_B, " (", exp_B, ").")
-    return(invisible(NULL))
-  }
-
-  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-
-  for (tp in common_tps) {
-    message("   Timepoint: ", tp, "H")
-
-    s2c_tp <- s2c_sub %>% filter(timepoint == tp) %>% droplevels()
-
-    # Basic checks (at least 1 sample per group; ideally >= 2)
-    n_A <- sum(s2c_tp$name == cond_A)
-    n_B <- sum(s2c_tp$name == cond_B)
-    if (n_A == 0 || n_B == 0) {
-      message("    Skipping ", tp, "H: missing one of the groups (", cond_A, " n=", n_A, "; ", cond_B, " n=", n_B, ").")
-      next
-    }
-    if (n_A < 2 || n_B < 2) {
-      warning("    Warning at ", tp, "H: low replicates (", cond_A, " n=", n_A, "; ", cond_B, " n=", n_B, "). Results may be unstable.")
-    }
-
-    # Relevel condition; keep only these two levels
-    s2c_tp <- s2c_tp %>%
-      mutate(
-        name = factor(as.character(name), levels = c(cond_A, cond_B)),
-        experiment = droplevels(factor(experiment))
-      )
-
-    # Prep with batch adjustment (~ name + experiment)
-    message("      Running: ", cond_B, " vs ", cond_A, "  (adjusting for experiment)")
-    so <- tryCatch({
-      sleuth_prep(
-        s2c_tp,
-        ~ name + experiment,
-        target_mapping = t2g,
-        aggregation_column = aggregation_column,
-        transformation_function = function(x) log2(x + 0.5),
-        num_cores = 1,
-        read_bootstrap_tpm = FALSE,
-        extra_bootstrap_summary = FALSE
-      )
-    }, error = function(e) {
-      message("Error in sleuth_prep: ", e$message)
-      message("Attempting to clean up and retry...")
-      gc()
-      closeAllConnections()
-      Sys.sleep(1)
-      sleuth_prep(
-        s2c_tp,
-        ~ name + experiment,
-        target_mapping = t2g,
-        aggregation_column = aggregation_column,
-        transformation_function = function(x) log2(x + 0.5),
-        num_cores = 1,
-        read_bootstrap_tpm = FALSE,
-        extra_bootstrap_summary = FALSE
-      )
-    })
-
-    # Fit and test the condition coefficient (namecond_B)
-    so <- sleuth_fit(so, ~ name + experiment, 'full')
-    so <- sleuth_fit(so, ~ experiment, 'reduced')  # drop the 'name' effect for LRT if you want LRT too
-    so <- sleuth_lrt(so, 'reduced', 'full')
-
-    coef_name <- paste0("name", cond_B)
-    so <- sleuth_wt(so, coef_name)
-    res <- sleuth_results(so, coef_name, 'wt')
-
-    out_file <- file.path(
-      out_dir,
-      paste0("sleuth_CrossExp_", tp, "H_", cond_B, "_vs_", cond_A, "__", exp_B, "_vs_", exp_A, ".csv")
-    )
-    write_csv(res, out_file)
-
-    # Cleanup
-    rm(so); gc(); closeAllConnections(); Sys.sleep(1)
-  }
-
-  gc(); closeAllConnections()
-  message(">> Completed cross-experiment: ", cond_B, " (", exp_B, ") vs ", cond_A, " (", exp_A, ")")
-}
-
-```
 
 # Run analyses within each experiment
 ```{r}
@@ -352,27 +241,5 @@ run_experiment(s2c,
 
 ```
 
-```{r cross experiment runs}
-# -------- Cross-experiment comparisons (adjust for experiment as covariate) --------
-# pmk1 (Exp2) vs MST7PM (Exp1)
-run_cross_experiment(
-  s2c_all = s2c,
-  cond_A = "pmk1",  exp_A = "Exp2",   # treated as control/reference
-  cond_B = "mst7", exp_B = "Exp1",
-  t2g = t2g,
-  aggregation_column = aggregation_column,
-  out_dir = "Analysis/Data/DGE"
-)
-
-# Optional: pmk1 (Exp2) vs MST7WT (Exp1)
-# run_cross_experiment(
-#   s2c_all = s2c,
-#   cond_A = "pmk1",  exp_A = "Exp2",
-#   cond_B = "MST7WT", exp_B = "Exp1",
-#   t2g = t2g,
-#   aggregation_column = aggregation_column,
-#   out_dir = "Analysis/Data/DGE"
-# )
-```
 
 
