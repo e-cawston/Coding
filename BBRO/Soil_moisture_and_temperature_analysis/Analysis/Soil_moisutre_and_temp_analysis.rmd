@@ -19,7 +19,7 @@ setwd("C:\\Users\\ges23jir\\Documents\\BBRO\\Soil_moisture_and_temperature_analy
 
 ```{r}
 # 2. Load the dataset from this directory
-df <- read_csv("Flempton_all_data_30.04.25.csv")
+df <- read_csv("Raw\\Flempton_all_data_30.04.25.csv")
 ```
 
 ```{r}
@@ -84,7 +84,7 @@ flux_results <- df %>%
 ```
 ```{r}
 # 6. Save the output
-write_csv(flux_results, "Flempton_Calculated_Fluxes_AutoSelected.csv")
+write_csv(flux_results, "Raw\\Flempton_Calculated_Fluxes_AutoSelected.csv")
 
 cat("Success: Fluxes calculated with automated point selection.")
 ```
@@ -93,18 +93,19 @@ cat("Success: Fluxes calculated with automated point selection.")
 
 ```{r}
 # 7. Load the data
-flux_data <- read_csv("Flempton_Calculated_Fluxes_AutoSelected.csv")
+flux_data <- read_csv("Raw\\Flempton_Calculated_Fluxes_AutoSelected.csv")
 
 # Load the original flux data (the manual Excel results)
 # Note: Cleaning the column names as they have trailing spaces
 # We use trimws to automatically fix "Plot ", "Treatment ", etc.
-original_flux_data <- read_csv("Flempton_product_gasmet_flux_30.04.25.csv") %>%
+original_flux_data <- read_csv("Raw\\Flempton_product_gasmet_flux_30.04.25.csv") %>%
+
   rename_with(trimws) %>% 
   select(Plot, flux_CO2_original = CO2, flux_N2O_original = N2O) %>%
   mutate(Plot = as.character(Plot))
 
 # Load randomization
-trial_book <- here("Flempton_Nitrogen_product_Trial_book_2025.xlsx")
+trial_book <- here("Raw\\Flempton_Nitrogen_product_Trial_book_2025.xlsx")
 randomisation <- read_excel(trial_book, sheet = "Plot randomisation") %>%
   rename(Plot = `Plot number`) %>%
   mutate(Plot = as.character(Plot))
@@ -159,5 +160,5 @@ ggplot(comparison_plot_data, aes(x = Product, y = N2O_Flux, fill = Method)) +
   scale_fill_manual(values = c("#D3D3D3", "#2E8B57")) # Gray for old, Green for your new refined data
 
 # Save the plot for your records
-ggsave("Flux_Method_Comparison.png", width = 10, height = 7)
+ggsave("Figures\\Flux_Method_Comparison.png", width = 10, height = 7)
 ```
