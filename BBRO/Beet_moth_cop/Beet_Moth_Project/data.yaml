@@ -1,0 +1,5 @@
+train: /content/drive/MyDrive/Euan_Work/BBRO/Data/AI_training/Beet_Moth_Project/images
+val: /content/drive/MyDrive/Euan_Work/BBRO/Data/AI_training/Beet_Moth_Project/images
+
+nc: 1
+names: ['Beet_Moth']
