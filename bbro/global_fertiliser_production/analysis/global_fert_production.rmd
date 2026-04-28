@@ -1,0 +1,160 @@
+#!/usr/bin/env Rscript
+
+
+#Part 1 - load and aggreagate data (note added new column mannually to output file labelling items as synthetic or not)
+```{r}
+# Load required libraries
+library(dplyr)
+library(readr)
+```
+```{r}
+#set here
+here::iam("analysis/global_fert_production.rmd")
+
+# Read the FAOSTAT data
+data <- read_csv(here("raw", "FAOSTAT_data_en_4-28-2026.csv"))
+```
+
+```{r}
+# Display original data structure
+cat("Original data structure:\n")
+print(str(data))
+cat("\n")
+cat("Number of rows in original data:", nrow(data), "\n")
+cat("Number of unique countries:", length(unique(data$Area)), "\n")
+cat("Number of unique items:", length(unique(data$Item)), "\n\n")
+```
+
+```{r}
+# Aggregate data by Item, summing production values globally
+global_production <- data %>%
+  group_by(Item, `Item Code`, Year, Unit, Element, `Element Code`) %>%
+  summarise(
+    Global_Production = sum(Value, na.rm = TRUE),
+    Number_of_Countries = n(),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(Global_Production))
+
+# Display summary of aggregated data
+cat("Aggregated global production data:\n")
+print(head(global_production, 20))
+cat("\n")
+cat("Number of rows in aggregated data:", nrow(global_production), "\n")
+```
+
+```{r}
+# Save the aggregated data to a new CSV file
+output_file <- here("raw", "cleaned", "global_production_by_item.csv")
+write_csv(global_production, output_file)
+cat("\nGlobal production data saved to:", output_file, "\n")
+```
+
+```{r}
+# Create a summary showing top 10 items by production
+cat("\nTop 10 items by global production:\n")
+top_items <- global_production %>%
+  slice_max(order_by = Global_Production, n = 10) %>%
+  select(Item, Year, Global_Production, Unit, Number_of_Countries)
+print(top_items)
+```
+
+# Part 2 - create a plot of the items by production
+
+## a pie chart of the items by global production
+```{r}
+library(ggplot2)
+
+# Read the manually modified data
+cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
+
+# Order the data by Global_Production (highest to lowest)
+# and convert Item to an ordered factor
+cleaned_data <- cleaned_data %>%
+  arrange(desc(Global_Production)) %>%
+  mutate(Item = factor(Item, levels = Item))
+
+# Define custom colors
+my_col_1 <- c("#440154FF", "#470E61FF", "#481B6DFF", "#482576FF", "#46307EFF", "#443B84FF", "#404688FF", "#3C508BFF", "#38598CFF", "#33628DFF", "#2F6B8EFF", "#2C738EFF", "#287C8EFF", "#25838EFF", "#228C8DFF", "#1F948CFF", "#1E9D89FF", "#20A486FF", "#26AD81FF", "#31B57BFF", "#3FBC73FF", "#4FC46AFF", "#61CB5FFF", "#75D054FF", "#8BD646FF", "#A2DA37FF", "#B9DE28FF", "#D1E11CFF", "#E8E419FF", "#FDE725FF")
+
+my_col_2 <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", "#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666", "#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", "#E41A1C", "#999999")
+# Create a pie chart of the items by global production
+pie_chart <- ggplot(cleaned_data, aes(x = "", y = Global_Production, fill = Item)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  labs(title = "Items by Global Production") +
+  scale_fill_manual(values = my_col_2)
+
+print(pie_chart)
+```
+
+## a pie chart of the items by global production with small items (< 2%) grouped into "Other"
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Read the data
+cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
+
+# Calculate percentage of total
+cleaned_data <- cleaned_data %>%
+  mutate(Percentage = Global_Production / sum(Global_Production) * 100)
+
+# Group items < 2% into "Other"
+threshold <- 2  # You can adjust this threshold
+
+cleaned_data_grouped <- cleaned_data %>%
+  mutate(Item_Display = ifelse(Percentage < threshold, "Other", Item)) %>%
+  group_by(Item_Display) %>%
+  summarise(Global_Production = sum(Global_Production)) %>%
+  arrange(desc(Global_Production)) %>%
+  mutate(Item_Display = factor(Item_Display, levels = Item_Display))
+
+# Create pie chart
+pie_chart <- ggplot(cleaned_data_grouped, aes(x = "", y = Global_Production, fill = Item_Display)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  labs(title = "Items by Global Production (Small items grouped)") +
+  scale_fill_manual(values = my_col_2)
+
+print(pie_chart)
+```
+
+
+## a horizontal bar chart of the items by global production
+```{r}
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
+
+# Order by production
+cleaned_data <- cleaned_data %>%
+  arrange(desc(Global_Production)) %>%
+  mutate(Item = factor(Item, levels = Item)) %>%
+  mutate(label_position = ifelse(Global_Production > max(Global_Production) * 0.1, 
+                                  "inside", "outside"))
+
+# Create horizontal bar chart
+bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item, fill = Item)) +
+  geom_col(color = "white") +
+  geom_text(data = filter(cleaned_data, label_position == "inside"),
+            aes(label = comma(Global_Production)), 
+            hjust = 1.1, size = 3, color = "white", fontface = "bold") +
+  geom_text(data = filter(cleaned_data, label_position == "outside"),
+            aes(label = comma(Global_Production)), 
+            hjust = -0.1, size = 3, color = "black") +
+  theme_minimal() +
+  labs(title = "Global Production by Fertilizer Type",
+       x = "Global Production (tonnes)",
+       y = NULL) +
+  scale_fill_manual(values = my_col_2) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  theme(legend.position = "none",
+        axis.text.y = element_text(size = 9))
+
+print(bar_chart)
+```
