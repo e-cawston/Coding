@@ -1,0 +1,48 @@
+#!/usr/bin/env Rscript
+
+```{r}
+# Load required libraries
+library(dplyr)
+library(readr)
+library(here)
+```
+```{r}
+# Read the FAOSTAT data
+data <- read_csv(here("data", "FAOSTAT_data_en_4-28-2026.csv"))
+```
+
+# Display original data structure
+cat("Original data structure:\n")
+print(str(data))
+cat("\n")
+cat("Number of rows in original data:", nrow(data), "\n")
+cat("Number of unique countries:", length(unique(data$Area)), "\n")
+cat("Number of unique items:", length(unique(data$Item)), "\n\n")
+
+# Aggregate data by Item, summing production values globally
+global_production <- data %>%
+  group_by(Item, `Item Code`, Year, Unit, Element, `Element Code`) %>%
+  summarise(
+    Global_Production = sum(Value, na.rm = TRUE),
+    Number_of_Countries = n(),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(Global_Production))
+
+# Display summary of aggregated data
+cat("Aggregated global production data:\n")
+print(head(global_production, 20))
+cat("\n")
+cat("Number of rows in aggregated data:", nrow(global_production), "\n")
+
+# Save the aggregated data to a new CSV file
+output_file <- "/home/claude/global_production_by_item.csv"
+write_csv(global_production, output_file)
+cat("\nGlobal production data saved to:", output_file, "\n")
+
+# Create a summary showing top 10 items by production
+cat("\nTop 10 items by global production:\n")
+top_items <- global_production %>%
+  slice_max(order_by = Global_Production, n = 10) %>%
+  select(Item, Year, Global_Production, Unit, Number_of_Countries)
+print(top_items)
