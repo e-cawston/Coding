@@ -1,0 +1,245 @@
+---
+title: "Sleuth Experiment-Seperate DGE analysis for Miriam and Euan data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
+```
+
+# Load libraries
+```{r}
+library(dplyr)
+library(readr)
+library(sleuth)
+library(here)
+library(tidyverse)
+```
+
+# Load sample metadata
+```{r}
+s2c <- read_csv(here("Raw","results","run_metadata.txt")) %>% 
+  mutate(path = gsub("/abundance.tsv", "", paste0(here("Raw","results"), "/", path)),
+         name = gsub("_0h_\\d$", "", name),
+         sample = paste0(name, "_",  timepoint, "_", biorep),
+         name = factor(name),
+         timepoint = factor(timepoint),
+         biorep = factor(biorep)
+         ) 
+
+s2c <- s2c %>%
+  mutate(
+    experiment = if_else(name %in% c("pmk1", "Guy11M"), "Exp2", "Exp1"),
+    experiment = factor(experiment, levels = c("Exp1", "Exp2"))
+  )
+```
+
+# Helper function
+```{r}
+do_DGE_one <- function(s2c_tp, control, condition_label,
+                       t2g = NULL,
+                       aggregation_column = NULL,
+                       out_dir = here("Analysis/Data/DGE")) {
+  s2c_tp <- s2c_tp %>%
+    mutate(name = droplevels(factor(name))) %>%
+    mutate(name = relevel(name, ref = control))
+  
+  message("      Running: ", condition_label, " vs ", control)
+  
+  # Try-catch to provide better error messages
+  so <- tryCatch({
+    sleuth_prep(
+      s2c_tp,
+      ~ name,
+      target_mapping = t2g,
+      aggregation_column = aggregation_column,
+      transformation_function = function(x) log2(x + 0.5),
+      num_cores = 1,
+      read_bootstrap_tpm = FALSE,
+      extra_bootstrap_summary = FALSE  # Reduce file access further
+    )
+  }, error = function(e) {
+    message("Error in sleuth_prep: ", e$message)
+    message("Attempting to clean up and retry...")
+    gc()
+    closeAllConnections()
+    Sys.sleep(1)
+    
+    # Retry once
+    sleuth_prep(
+      s2c_tp,
+      ~ name,
+      target_mapping = t2g,
+      aggregation_column = aggregation_column,
+      transformation_function = function(x) log2(x + 0.5),
+      num_cores = 1,
+      read_bootstrap_tpm = FALSE,
+      extra_bootstrap_summary = FALSE
+    )
+  })
+  
+  so <- sleuth_fit(so, ~ name, 'full')
+  so <- sleuth_fit(so, ~ 1, 'reduced')
+  so <- sleuth_lrt(so, 'reduced', 'full')
+  
+  coef_name <- paste0("name", condition_label)
+  so <- sleuth_wt(so, coef_name)
+  res <- sleuth_results(so, coef_name, 'wt')
+  
+  tp_str <- as.character(unique(s2c_tp$timepoint))
+  exp_str <- as.character(unique(s2c_tp$experiment))
+  
+  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  out_file <- file.path(out_dir,
+                        paste0("sleuth_", exp_str, "_", tp_str, "H_",
+                               condition_label, "_vs_", control, ".csv"))
+  write_csv(res, out_file)
+  
+  # Force cleanup
+  rm(so)
+  gc()
+  closeAllConnections()
+  Sys.sleep(1)  # Increased pause
+  
+  return(res)
+}
+```
+
+# Run full experiment
+```{r}
+run_experiment <- function(s2c_all,
+                           experiment_label,
+                           control_name,
+                           exclude_from_tests = character(),
+                           t2g = NULL,
+                           aggregation_column = NULL,
+                           out_dir = here("Analysis/Data/DGE")) {
+
+  message(">> Running ", experiment_label, "   (control = ", control_name, ")")
+
+  s2c_exp <- s2c_all %>%
+    filter(experiment == experiment_label) %>%
+    droplevels()
+
+  stopifnot(control_name %in% s2c_exp$name)
+
+  conditions <- setdiff(levels(droplevels(s2c_exp$name)),
+                        c(control_name, exclude_from_tests))
+
+  if (length(conditions) == 0) {
+    warning("No conditions remain for ", experiment_label)
+    return(NULL)
+  }
+
+  for (tp in levels(s2c_exp$timepoint)) {
+
+    message("   Timepoint: ", tp, "H")
+    s2c_tp <- s2c_exp %>% filter(timepoint == tp)
+
+    if (nrow(s2c_tp) == 0) next
+    if (!(control_name %in% s2c_tp$name)) {
+      message("    Control not present at this timepoint -- skipped.")
+      next
+    }
+
+    for (nm in conditions) {
+      if (nm %in% s2c_tp$name) {
+        do_DGE_one(s2c_tp,
+                   control = control_name,
+                   condition_label = nm,
+                   t2g = t2g,
+                   aggregation_column = aggregation_column,
+                   out_dir = out_dir)
+      }
+    }
+    
+    # Clean up after each timepoint to release file handles
+    gc()
+    closeAllConnections()
+    Sys.sleep(1)  # Increased pause
+  }
+  
+  # Final cleanup after experiment
+  gc()
+  closeAllConnections()
+  message(">> Completed ", experiment_label)
+}
+```
+
+# Optional t2g
+```{r}
+t2g <- NULL
+aggregation_column <- NULL
+```
+
+
+
+# Run analyses within each experiment
+```{r}
+#All Exp1 against Guy11
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "Guy11",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+
+#All Exp1 against MST7WT
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "MST7WT",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp1 against mst7
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "mst7",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp1 against MST7PM
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "MST7PM",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp1 against MST7PD
+run_experiment(s2c,
+               experiment_label = "Exp1",
+               control_name = "MST7PD",
+               exclude_from_tests = c("Guy11M"))
+
+# Additional cleanup between experiments
+gc()
+closeAllConnections()
+Sys.sleep(2)
+
+#All Exp2 against Guy11M
+run_experiment(s2c,
+               experiment_label = "Exp2",
+               control_name = "Guy11M",
+               exclude_from_tests = character())
+
+
+```
+
+
+
