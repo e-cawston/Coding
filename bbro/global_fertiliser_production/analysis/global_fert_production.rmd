@@ -8,8 +8,8 @@ library(dplyr)
 library(readr)
 ```
 ```{r}
-#set here
-here::iam("analysis/global_fert_production.rmd")
+#set here. Make sure to set the working directory to the root of the project first with setwd()
+library(here)
 
 # Read the FAOSTAT data
 data <- read_csv(here("raw", "FAOSTAT_data_en_4-28-2026.csv"))
@@ -157,4 +157,12 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item, fill = It
         axis.text.y = element_text(size = 9))
 
 print(bar_chart)
+```
+
+```{r}
+# Save the bar chart to a file
+ggsave(here("analysis", "global_production_bar_chart.svg"), plot = bar_chart, width = 10, height = 6)
+cat("\nBar chart saved to:", here("analysis", "global_production_bar_chart.svg"), "\n")
+
+
 ```
