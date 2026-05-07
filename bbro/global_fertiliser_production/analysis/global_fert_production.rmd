@@ -290,7 +290,7 @@ p <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
   coord_polar("y", start = 0) +
   geom_text(aes(label = pct_label), 
             position = position_stack(vjust = 0.5),
-            color = "white", size = 5, fontface = "bold") +
+            color = "black", size = 5, fontface = "bold") +
   scale_fill_manual(values = category_colors) +
   labs(
     title = "Global Fertiliser Items by Production Category",
