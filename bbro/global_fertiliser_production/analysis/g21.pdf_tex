@@ -1,0 +1,70 @@
+%% Creator: Inkscape 1.4 (86a8ad7, 2024-10-11), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'g21.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{504bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.85714286)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{g21.pdf}}%
+    \put(0.2643254,0.37281745){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textbf{52.2\%}\end{tabular}}}}%
+    \put(0.53501983,0.29696431){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textbf{26.1\%}\end{tabular}}}}%
+    \put(0.53501983,0.46902778){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textbf{13\%}\end{tabular}}}}%
+    \put(0.4534127,0.52664681){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textbf{8.7\%}\end{tabular}}}}%
+    \put(0.79734124,0.45900793){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textbf{Category}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{g21.pdf}}%
+    \put(0.84349205,0.42099205){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Synthetic\end{tabular}}}}%
+    \put(0.84349205,0.38670634){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Unspecified\end{tabular}}}}%
+    \put(0.84349205,0.35242063){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Non-synthetic\end{tabular}}}}%
+    \put(0.84349205,0.31813491){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Blended\end{tabular}}}}%
+    \put(0.41315476,0.77017857){\color[rgb]{0.4,0.4,0.4}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}n = 23 fertiliser types\end{tabular}}}}%
+    \put(0.41315472,0.80367063){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textbf{Global Fertiliser Items by Production Category}\end{tabular}}}}%
+  \end{picture}%
+\endgroup%

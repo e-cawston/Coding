@@ -61,6 +61,16 @@ print(top_items)
 
 # Part 2 - create a plot of the items by production
 
+## colour schemes
+```{r}
+# Define custom colors
+my_col_1 <- c("#440154FF", "#470E61FF", "#481B6DFF", "#482576FF", "#46307EFF", "#443B84FF", "#404688FF", "#3C508BFF", "#38598CFF", "#33628DFF", "#2F6B8EFF", "#2C738EFF", "#287C8EFF", "#25838EFF", "#228C8DFF", "#1F948CFF", "#1E9D89FF", "#20A486FF", "#26AD81FF", "#31B57BFF", "#3FBC73FF", "#4FC46AFF", "#61CB5FFF", "#75D054FF", "#8BD646FF", "#A2DA37FF", "#B9DE28FF", "#D1E11CFF", "#E8E419FF", "#FDE725FF")
+
+my_col_2 <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", "#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666", "#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", "#E41A1C", "#999999")
+
+my_col_3 <- c("#999999", "#E41A1C", "#B15928", "#FFFF99", "#6A3D9A", "#CAB2D6", "#FF7F00", "#FDBF6F", "#E31A1C", "#FB9A99", "#33A02C", "#B2DF8A", "#1F78B4", "#A6CEE3", "#666666", "#A6761D", "#E6AB02", "#66A61E", "#E7298A", "#7570B3", "#D95F02", "#1B9E77", "#B3B3B3", "#E5C494", "#FFD92F", "#A6D854", "#E78AC3", "#8DA0CB", "#FC8D62", "#66C2A5")
+```
+
 ## a pie chart of the items by global production
 ```{r}
 library(ggplot2)
@@ -74,10 +84,6 @@ cleaned_data <- cleaned_data %>%
   arrange(desc(Global_Production)) %>%
   mutate(Item = factor(Item, levels = Item))
 
-# Define custom colors
-my_col_1 <- c("#440154FF", "#470E61FF", "#481B6DFF", "#482576FF", "#46307EFF", "#443B84FF", "#404688FF", "#3C508BFF", "#38598CFF", "#33628DFF", "#2F6B8EFF", "#2C738EFF", "#287C8EFF", "#25838EFF", "#228C8DFF", "#1F948CFF", "#1E9D89FF", "#20A486FF", "#26AD81FF", "#31B57BFF", "#3FBC73FF", "#4FC46AFF", "#61CB5FFF", "#75D054FF", "#8BD646FF", "#A2DA37FF", "#B9DE28FF", "#D1E11CFF", "#E8E419FF", "#FDE725FF")
-
-my_col_2 <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", "#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666", "#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", "#E41A1C", "#999999")
 # Create a pie chart of the items by global production
 pie_chart <- ggplot(cleaned_data, aes(x = "", y = Global_Production, fill = Item)) +
   geom_bar(stat = "identity", width = 1, color = "white") +
@@ -143,7 +149,7 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item, fill = It
   geom_col(color = "white") +
   geom_text(data = filter(cleaned_data, label_position == "inside"),
             aes(label = comma(Global_Production)), 
-            hjust = 1.1, size = 3, color = "white", fontface = "bold") +
+            hjust = 1.1, size = 3, color = "black", fontface = "bold") +
   geom_text(data = filter(cleaned_data, label_position == "outside"),
             aes(label = comma(Global_Production)), 
             hjust = -0.1, size = 3, color = "black") +
@@ -158,15 +164,88 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item, fill = It
 
 print(bar_chart)
 ```
-
 ```{r}
-# Save the bar chart to a file
-ggsave(here("analysis", "global_production_bar_chart.svg"), plot = bar_chart, width = 10, height = 6)
-cat("\nBar chart saved to:", here("analysis", "global_production_bar_chart.svg"), "\n")
+library(ggplot2)
+library(dplyr)
+library(scales)
+library(readr)
+library(here)
+library(forcats)
+library(stringr)
+
+cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
+
+# 1. Abbreviate labels and reorder
+cleaned_data <- cleaned_data %>%
+  mutate(Item_clean = case_when(
+    Item == "Urea" ~ "Urea",
+    Item == "Potassium chloride (muriate of potash) (MOP)" ~ "MOP",
+    Item == "NPK fertilizers" ~ "NPK fertilizers",
+    Item == "Ammonium nitrate (AN)" ~ "AN",
+    Item == "Other NP compounds" ~ "Other NP",
+    Item == "Ammonia, anhydrous" ~ "Anhydrous ammonia",
+    Item == "Diammonium phosphate (DAP)" ~ "DAP",
+    Item == "Superphosphates, other" ~ "Other superphosphates",
+    Item == "Ammonium sulphate" ~ "Ammonium sulphate",
+    Item == "Potassium nitrate" ~ "Potassium nitrate",
+    Item == "Phosphate rock" ~ "Phosphate rock",
+    Item == "Other phosphatic fertilizers, n.e.c." ~ "Other P fert.",
+    Item == "Calcium ammonium nitrate (CAN) and other mixtures with calcium carbonate" ~ "CAN + CaCO3",
+    Item == "Urea and ammonium nitrate solutions (UAN)" ~ "UAN",
+    Item == "Monoammonium phosphate (MAP)" ~ "MAP",
+    Item == "Fertilizers n.e.c." ~ "Fertilizers n.e.c.",
+    Item == "Superphosphates above 35%" ~ "Superphos. >35%",
+    Item == "Other nitrogenous fertilizers, n.e.c." ~ "Other N fert.",
+    Item == "Potassium sulphate (sulphate of potash) (SOP)" ~ "SOP",
+    Item == "PK compounds" ~ "PK compounds",
+    Item == "Other potassic fertilizers, n.e.c." ~ "Other K fert.",
+    Item == "Sodium nitrate" ~ "Sodium nitrate",
+    Item == "Other NK compounds" ~ "Other NK",
+    TRUE ~ str_trunc(Item, 18)
+  )) %>%
+  mutate(Item_clean = fct_reorder(Item_clean, Global_Production)) %>%
+  mutate(label_pos = ifelse(Global_Production > max(Global_Production) * 0.15,
+                            "inside", "outside"))
+
+# 2. Use your original palette - assuming my_col_2 exists
+
+bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean, fill = Item_clean)) +
+  geom_col(color = "white", linewidth = 0.2) +
+  # Labels inside bars - now black
+  geom_text(data = filter(cleaned_data, label_pos == "inside"),
+            aes(label = label_number(scale = 1e-6, accuracy = 0.1)(Global_Production)),
+            hjust = 1.1, size = 3, color = "black", fontface = "bold") +
+  # Labels outside bars  
+  geom_text(data = filter(cleaned_data, label_pos == "outside"),
+            aes(label = label_number(scale = 1e-6, accuracy = 0.1)(Global_Production)),
+            hjust = -0.1, size = 3, color = "grey20") +
+  theme_minimal(base_size = 11) +
+  labs(x = "Global Production (Mt)", y = NULL, title = NULL) +
+  scale_fill_manual(values = my_col_3) + # your original palette inverted
+  scale_x_continuous(
+    labels = label_number(scale = 1e-6),
+    expand = expansion(mult = c(0, 0.18))
+  ) +
+  theme(
+    legend.position = "none", # hide legend since each bar = one item
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_text(size = 9, color = "grey20"),
+    axis.text.x = element_text(size = 9, color = "grey20"),
+    axis.title.x = element_text(size = 10, color = "grey20", margin = margin(t = 8)),
+    plot.margin = margin(5, 15, 5, 5)
+  )
+
+print(bar_chart)
+
+ggsave(here("analysis", "global_production_bar_chart.svg"),
+       plot = bar_chart, width = 7, height = 8, units = "in")
 
 
 ```
 
+
+## a pie chart of the items by production category (synthetic, non-synthetic, blended, unspecified) - note this requires a new column to be added to the data manually labelling each item as synthetic or not
 ```{r}
 # pie_synthetic_categories.R
 # Makes a pie chart of fertiliser items by Category column
@@ -228,7 +307,7 @@ p <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
   )
 
 # 5. Save high-res version
-ggsave(here("analysis", "synthetic_pie_chart_ggplot2.svg"), 
+ggsave(here("analysis", "synthetic_pie_chart.svg"), 
        plot = p, 
        width = 7, 
        height = 6, 
@@ -237,5 +316,5 @@ ggsave(here("analysis", "synthetic_pie_chart_ggplot2.svg"),
 
 # 6. Display in RStudio/VSCode plots pane
 print(p)
-cat("\nSaved chart to", here("analysis", "synthetic_pie_chart_ggplot2.svg"), "\n")
+cat("\nSaved chart to", here("analysis", "synthetic_pie_chart.svg"), "\n")
 ```
