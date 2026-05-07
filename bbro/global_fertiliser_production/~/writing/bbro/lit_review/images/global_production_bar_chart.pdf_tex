@@ -1,0 +1,109 @@
+%% Creator: Inkscape 1.2.2 (b0a8486541, 2022-12-01), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'global_production_bar_chart.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{504bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,1.14285714)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{global_production_bar_chart.pdf}}%
+    \put(0.85047622,1.09964286){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{66.4}\end{tabular}}}}%
+    \put(0.56853176,1.05378968){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{37.5}\end{tabular}}}}%
+    \put(0.46765872,1.00793651){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{27.2}\end{tabular}}}}%
+    \put(0.35222223,0.96208333){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{15.3}\end{tabular}}}}%
+    \put(0.34128967,0.91623016){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{14.2}\end{tabular}}}}%
+    \put(0.31765874,0.87039681){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{11.8}\end{tabular}}}}%
+    \put(0.31055557,0.82454367){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{11.0}\end{tabular}}}}%
+    \put(0.30456349,0.77869049){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}9.9\end{tabular}}}}%
+    \put(0.27136906,0.73283731){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}6.4\end{tabular}}}}%
+    \put(0.27041665,0.68698414){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}6.3\end{tabular}}}}%
+    \put(0.26077379,0.64115079){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}5.4\end{tabular}}}}%
+    \put(0.25234127,0.59529762){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}4.5\end{tabular}}}}%
+    \put(0.24408729,0.54944447){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}3.6\end{tabular}}}}%
+    \put(0.24119047,0.50359126){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}3.4\end{tabular}}}}%
+    \put(0.21837301,0.45773812){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}1.0\end{tabular}}}}%
+    \put(0.21722223,0.41188491){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.9\end{tabular}}}}%
+    \put(0.2167262,0.36605157){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.8\end{tabular}}}}%
+    \put(0.21172619,0.32019842){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.3\end{tabular}}}}%
+    \put(0.20974206,0.27434522){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.1\end{tabular}}}}%
+    \put(0.20964286,0.22849207){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.1\end{tabular}}}}%
+    \put(0.20930555,0.18263886){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.1\end{tabular}}}}%
+    \put(0.20876984,0.13680558){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.0\end{tabular}}}}%
+    \put(0.20853174,0.09095243){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.0\end{tabular}}}}%
+    \put(0.1963889,0.09063491){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Other NK\end{tabular}}}}%
+    \put(0.1963889,0.13648811){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Sodium nitrate\end{tabular}}}}%
+    \put(0.1963889,0.18234126){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Other K fert.\end{tabular}}}}%
+    \put(0.1963889,0.2281746){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}PK compounds\end{tabular}}}}%
+    \put(0.1963889,0.27402775){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}SOP\end{tabular}}}}%
+    \put(0.1963889,0.31988095){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Other N fert.\end{tabular}}}}%
+    \put(0.1963889,0.3657341){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Superphos. >35\%\end{tabular}}}}%
+    \put(0.1963889,0.41158731){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Fertilizers n.e.c.\end{tabular}}}}%
+    \put(0.1963889,0.45742065){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}MAP\end{tabular}}}}%
+    \put(0.1963889,0.5032738){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}UAN\end{tabular}}}}%
+    \put(0.1963889,0.549127){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}CAN + CaCO3\end{tabular}}}}%
+    \put(0.1963889,0.59498015){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Other P fert.\end{tabular}}}}%
+    \put(0.1963889,0.64083332){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Phosphate rock\end{tabular}}}}%
+    \put(0.1963889,0.68666667){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Potassium nitrate\end{tabular}}}}%
+    \put(0.1963889,0.73251985){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Ammonium sulphate\end{tabular}}}}%
+    \put(0.1963889,0.77837302){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Other superphosphates\end{tabular}}}}%
+    \put(0.1963889,0.8242262){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}DAP\end{tabular}}}}%
+    \put(0.1963889,0.87007937){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Anhydrous ammonia\end{tabular}}}}%
+    \put(0.1963889,0.91593253){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Other NP\end{tabular}}}}%
+    \put(0.1963889,0.96176588){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}AN\end{tabular}}}}%
+    \put(0.1963889,1.00761904){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}NPK fertilizers\end{tabular}}}}%
+    \put(0.1963889,1.05347222){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}MOP\end{tabular}}}}%
+    \put(0.1963889,1.0993254){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}Urea\end{tabular}}}}%
+    \put(0.20617064,0.04720234){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}%
+    \put(0.40117064,0.04720234){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}20\end{tabular}}}}%
+    \put(0.59617064,0.04720234){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}40\end{tabular}}}}%
+    \put(0.79115077,0.04720234){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}60\end{tabular}}}}%
+    \put(0.58825399,0.01400793){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Global Production (Mt)\end{tabular}}}}%
+  \end{picture}%
+\endgroup%

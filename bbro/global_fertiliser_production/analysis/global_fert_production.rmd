@@ -130,40 +130,7 @@ print(pie_chart)
 
 
 ## a horizontal bar chart of the items by global production
-```{r}
-library(ggplot2)
-library(dplyr)
-library(scales)
 
-cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
-
-# Order by production
-cleaned_data <- cleaned_data %>%
-  arrange(desc(Global_Production)) %>%
-  mutate(Item = factor(Item, levels = Item)) %>%
-  mutate(label_position = ifelse(Global_Production > max(Global_Production) * 0.1, 
-                                  "inside", "outside"))
-
-# Create horizontal bar chart
-bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item, fill = Item)) +
-  geom_col(color = "white") +
-  geom_text(data = filter(cleaned_data, label_position == "inside"),
-            aes(label = comma(Global_Production)), 
-            hjust = 1.1, size = 3, color = "black", fontface = "bold") +
-  geom_text(data = filter(cleaned_data, label_position == "outside"),
-            aes(label = comma(Global_Production)), 
-            hjust = -0.1, size = 3, color = "black") +
-  theme_minimal() +
-  labs(title = "Global Production by Fertilizer Type",
-       x = "Global Production (tonnes)",
-       y = NULL) +
-  scale_fill_manual(values = my_col_2) +
-  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
-  theme(legend.position = "none",
-        axis.text.y = element_text(size = 9))
-
-print(bar_chart)
-```
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -209,8 +176,8 @@ cleaned_data <- cleaned_data %>%
 
 # 2. Use your original palette - assuming my_col_2 exists
 
-bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean, fill = Item_clean)) +
-  geom_col(color = "white", linewidth = 0.2) +
+bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean)) +
+  geom_col(fill = "#A2DA37FF", color = "white", linewidth = 0.2) +
   # Labels inside bars - now black
   geom_text(data = filter(cleaned_data, label_pos == "inside"),
             aes(label = label_number(scale = 1e-6, accuracy = 0.1)(Global_Production)),
@@ -220,8 +187,7 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean, fil
             aes(label = label_number(scale = 1e-6, accuracy = 0.1)(Global_Production)),
             hjust = -0.1, size = 3, color = "grey20") +
   theme_minimal(base_size = 11) +
-  labs(x = "Global Production (Mt)", y = NULL, title = NULL) +
-  scale_fill_manual(values = my_col_3) + # your original palette inverted
+  labs(x = "Global Production (Mt)", y = NULL, title = NULL) + 
   scale_x_continuous(
     labels = label_number(scale = 1e-6),
     expand = expansion(mult = c(0, 0.18))
@@ -237,12 +203,9 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean, fil
   )
 
 print(bar_chart)
-
-ggsave(here("analysis", "global_production_bar_chart.svg"),
-       plot = bar_chart, width = 7, height = 8, units = "in")
-
-
 ```
+
+
 
 
 ## a pie chart of the items by production category (synthetic, non-synthetic, blended, unspecified) - note this requires a new column to be added to the data manually labelling each item as synthetic or not
@@ -285,7 +248,7 @@ category_colors <- c(
 )
 
 # 4. Build pie chart
-p <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
+pie_chart <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
   geom_col(width = 1, color = "white", linewidth = 0.5) +
   coord_polar("y", start = 0) +
   geom_text(aes(label = pct_label), 
@@ -306,15 +269,41 @@ p <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
     plot.margin = margin(10, 10, 10, 10)
   )
 
-# 5. Save high-res version
-ggsave(here("analysis", "synthetic_pie_chart.svg"), 
-       plot = p, 
-       width = 7, 
-       height = 6, 
-       dpi = 300,
-       bg = "white")
-
-# 6. Display in RStudio/VSCode plots pane
+# 5. Display in RStudio/VSCode plots pane
 print(p)
-cat("\nSaved chart to", here("analysis", "synthetic_pie_chart.svg"), "\n")
+```
+
+```{r}
+bar_svg_path <- here("analysis", "global_production_bar_chart.svg")
+pie_svg_path <- here("analysis", "synthetic_pie_chart.svg")
+pdf_dir  <- path.expand("~/writing/bbro/lit_review/images")
+# 1. Save SVGs
+ggsave(bar_svg_path, plot = bar_chart, width = 7, height = 8, units = "in", dpi = 600)
+ggsave(pie_svg_path, plot = pie_chart, width = 4, height = 3, units = "in", dpi = 600)
+
+# 2. Change to target dir so pdf_tex lands there
+old_wd <- getwd()
+setwd(pdf_dir)
+on.exit(setwd(old_wd))
+
+# 3. Function to export one SVG via Inkscape
+export_svg_to_pdftex <- function(svg_file, pdf_name) {
+  system2(
+    command = "inkscape",
+    args = c(
+      svg_file,
+      "--export-area-drawing",
+      "--export-type=pdf",
+      "--export-latex",
+      paste0("--export-filename=", pdf_name)
+    )
+  )
+}
+
+# 4. Export both
+export_svg_to_pdftex(bar_svg_path, "global_production_bar_chart.pdf")
+export_svg_to_pdftex(pie_svg_path, "global_production_pie_chart.pdf")
+
+cat("\nFiles created:\n")
+
 ```
