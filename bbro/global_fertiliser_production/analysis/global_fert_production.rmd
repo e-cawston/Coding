@@ -166,3 +166,76 @@ cat("\nBar chart saved to:", here("analysis", "global_production_bar_chart.svg")
 
 
 ```
+
+```{r}
+# pie_synthetic_categories.R
+# Makes a pie chart of fertiliser items by Category column
+
+# Install packages if first time
+# install.packages(c("readr", "dplyr", "ggplot2", "RColorBrewer"))
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+
+# 1. Load data - update path if needed
+cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
+
+# 2. Count categories and calc percentages
+plot_data <- cleaned_data %>%
+  count(Category) %>%
+  mutate(
+    pct = n / sum(n) * 100,
+    pct_label = paste0(round(pct, 1), "%"),
+    cat_label = paste0(Category, "\n", n, " items")
+  ) %>%
+  arrange(desc(n)) # puts biggest slice first
+
+print(plot_data)
+
+# 3. Set category order + colors for consistency
+plot_data$Category <- factor(plot_data$Category, 
+                             levels = c("Synthetic", "Unspecified", "Non-synthetic", "Blended"))
+
+category_colors <- c(
+  "Synthetic" = "#66C2A5",      
+  "Unspecified" = "#FC8D62",    
+  "Non-synthetic" = "#8DA0CB",  
+  "Blended" = "#E78AC3"        
+)
+
+# 4. Build pie chart
+p <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
+  geom_col(width = 1, color = "white", linewidth = 0.5) +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = pct_label), 
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 5, fontface = "bold") +
+  scale_fill_manual(values = category_colors) +
+  labs(
+    title = "Global Fertiliser Items by Production Category",
+    subtitle = paste("n =", sum(plot_data$n), "fertiliser types"),
+    fill = "Category"
+  ) +
+  theme_void(base_size = 12) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 11, color = "grey40"),
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+# 5. Save high-res version
+ggsave(here("analysis", "synthetic_pie_chart_ggplot2.svg"), 
+       plot = p, 
+       width = 7, 
+       height = 6, 
+       dpi = 300,
+       bg = "white")
+
+# 6. Display in RStudio/VSCode plots pane
+print(p)
+cat("\nSaved chart to", here("analysis", "synthetic_pie_chart_ggplot2.svg"), "\n")
+```
