@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='504.00pt' height='576.00pt' viewBox='0 0 504.00 576.00'>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='288.00pt' height='360.00pt' viewBox='0 0 288.00 360.00'>
 <g class='svglite'>
 <defs>
   <style type='text/css'><![CDATA[
@@ -21,99 +21,99 @@
 </defs>
 <rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
 <defs>
-  <clipPath id='cpMC4wMHw1MDQuMDB8MC4wMHw1NzYuMDA='>
-    <rect x='0.00' y='0.00' width='504.00' height='576.00' />
+  <clipPath id='cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA='>
+    <rect x='0.00' y='0.00' width='288.00' height='360.00' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHw1NzYuMDA=)'>
-<rect x='0.00' y='0.00' width='504.00' height='576.00' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<g clip-path='url(#cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA=)'>
+<rect x='0.00' y='0.00' width='288.00' height='360.00' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
 </g>
 <defs>
-  <clipPath id='cpMTAzLjkxfDQ4OS4wNnw0Ljk4fDU0MS4wOQ=='>
-    <rect x='103.91' y='4.98' width='385.14' height='536.11' />
+  <clipPath id='cpOTguOTN8Mjg4LjAwfDAuMDB8MzMwLjA3'>
+    <rect x='98.93' y='0.000000000000057' width='189.07' height='330.07' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpMTAzLjkxfDQ4OS4wNnw0Ljk4fDU0MS4wOQ==)'>
-<polyline points='103.91,541.09 103.91,4.98 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<polyline points='202.19,541.09 202.19,4.98 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<polyline points='300.47,541.09 300.47,4.98 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<polyline points='398.74,541.09 398.74,4.98 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<rect x='103.91' y='8.45' width='326.39' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='31.56' width='184.29' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='54.66' width='133.45' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='77.77' width='75.27' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='100.88' width='69.76' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='123.99' width='57.80' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='147.10' width='54.22' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='170.20' width='48.40' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='193.31' width='31.67' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='216.42' width='31.19' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='239.53' width='26.33' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='262.64' width='22.08' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='285.74' width='17.92' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='308.85' width='16.46' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='331.96' width='4.96' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='355.07' width='4.38' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='378.18' width='4.13' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='401.29' width='1.61' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='424.39' width='0.61' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='447.50' width='0.56' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='470.61' width='0.39' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='493.72' width='0.12' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<rect x='103.91' y='516.83' width='0.00073' height='20.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
-<text x='428.64' y='21.78' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>66.4</text>
-<text x='286.54' y='44.89' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>37.5</text>
-<text x='235.70' y='68.00' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>27.2</text>
-<text x='177.52' y='91.11' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>15.3</text>
-<text x='172.01' y='114.22' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>14.2</text>
-<text x='160.10' y='137.32' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.16px' lengthAdjust='spacingAndGlyphs'>11.8</text>
-<text x='156.52' y='160.43' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.16px' lengthAdjust='spacingAndGlyphs'>11.0</text>
-<text x='153.50' y='183.54' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>9.9</text>
-<text x='136.77' y='206.65' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>6.4</text>
-<text x='136.29' y='229.76' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>6.3</text>
-<text x='131.43' y='252.86' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>5.4</text>
-<text x='127.18' y='275.97' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>4.5</text>
-<text x='123.02' y='299.08' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>3.6</text>
-<text x='121.56' y='322.19' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>3.4</text>
-<text x='110.06' y='345.30' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>1.0</text>
-<text x='109.48' y='368.41' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.9</text>
-<text x='109.23' y='391.51' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.8</text>
-<text x='106.71' y='414.62' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.3</text>
-<text x='105.71' y='437.73' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.1</text>
-<text x='105.66' y='460.84' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.1</text>
-<text x='105.49' y='483.95' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.1</text>
-<text x='105.22' y='507.05' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.0</text>
-<text x='105.10' y='530.16' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<g clip-path='url(#cpOTguOTN8Mjg4LjAwfDAuMDB8MzMwLjA3)'>
+<polyline points='98.93,330.07 98.93,0.000000000000057 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='147.18,330.07 147.18,0.000000000000057 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='195.42,330.07 195.42,0.000000000000057 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='243.66,330.07 243.66,0.000000000000057 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<rect x='98.93' y='2.13' width='160.23' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='16.36' width='90.47' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='30.59' width='65.51' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='44.82' width='36.95' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='59.04' width='34.25' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='73.27' width='28.38' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='87.50' width='26.62' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='101.72' width='23.76' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='115.95' width='15.55' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='130.18' width='15.31' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='144.41' width='12.92' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='158.63' width='10.84' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='172.86' width='8.80' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='187.09' width='8.08' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='201.31' width='2.43' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='215.54' width='2.15' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='229.77' width='2.03' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='244.00' width='0.79' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='258.22' width='0.30' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='272.45' width='0.28' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='286.68' width='0.19' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='300.90' width='0.061' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<rect x='98.93' y='315.13' width='0.00036' height='12.80' style='stroke-width: 0.43; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #A2DA37;' />
+<text x='257.50' y='11.47' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>66.4</text>
+<text x='187.74' y='25.70' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>37.5</text>
+<text x='162.78' y='39.93' text-anchor='end' style='font-size: 8.54px; font-weight: bold; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>27.2</text>
+<text x='137.54' y='54.16' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>15.3</text>
+<text x='134.84' y='68.38' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='16.62px' lengthAdjust='spacingAndGlyphs'>14.2</text>
+<text x='128.91' y='82.61' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='15.98px' lengthAdjust='spacingAndGlyphs'>11.8</text>
+<text x='127.15' y='96.84' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='15.98px' lengthAdjust='spacingAndGlyphs'>11.0</text>
+<text x='123.88' y='111.06' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>9.9</text>
+<text x='115.67' y='125.29' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>6.4</text>
+<text x='115.43' y='139.52' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>6.3</text>
+<text x='113.04' y='153.75' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>5.4</text>
+<text x='110.96' y='167.97' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>4.5</text>
+<text x='108.92' y='182.20' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>3.6</text>
+<text x='108.20' y='196.43' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>3.4</text>
+<text x='102.55' y='210.65' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>1.0</text>
+<text x='102.27' y='224.88' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.9</text>
+<text x='102.14' y='239.11' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.8</text>
+<text x='100.91' y='253.34' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.3</text>
+<text x='100.42' y='267.56' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.1</text>
+<text x='100.40' y='281.79' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.1</text>
+<text x='100.31' y='296.02' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.1</text>
+<text x='100.18' y='310.24' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='100.12' y='324.47' style='font-size: 8.54px;fill: #333333; font-family: "Arimo";' textLength='11.88px' lengthAdjust='spacingAndGlyphs'>0.0</text>
 </g>
-<g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='98.98' y='530.32' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='37.50px' lengthAdjust='spacingAndGlyphs'>Other NK</text>
-<text x='98.98' y='507.21' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='58.00px' lengthAdjust='spacingAndGlyphs'>Sodium nitrate</text>
-<text x='98.98' y='484.10' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='49.00px' lengthAdjust='spacingAndGlyphs'>Other K fert.</text>
-<text x='98.98' y='461.00' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='61.00px' lengthAdjust='spacingAndGlyphs'>PK compounds</text>
-<text x='98.98' y='437.89' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.00px' lengthAdjust='spacingAndGlyphs'>SOP</text>
-<text x='98.98' y='414.78' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='49.50px' lengthAdjust='spacingAndGlyphs'>Other N fert.</text>
-<text x='98.98' y='391.67' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='71.75px' lengthAdjust='spacingAndGlyphs'>Superphos. &gt;35%</text>
-<text x='98.98' y='368.56' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='63.50px' lengthAdjust='spacingAndGlyphs'>Fertilizers n.e.c.</text>
-<text x='98.98' y='345.46' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>MAP</text>
-<text x='98.98' y='322.35' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.00px' lengthAdjust='spacingAndGlyphs'>UAN</text>
-<text x='98.98' y='299.24' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='59.25px' lengthAdjust='spacingAndGlyphs'>CAN + CaCO3</text>
-<text x='98.98' y='276.13' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='48.84px' lengthAdjust='spacingAndGlyphs'>Other P fert.</text>
-<text x='98.98' y='253.02' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='62.50px' lengthAdjust='spacingAndGlyphs'>Phosphate rock</text>
-<text x='98.98' y='229.92' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='69.50px' lengthAdjust='spacingAndGlyphs'>Potassium nitrate</text>
-<text x='98.98' y='206.81' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='82.00px' lengthAdjust='spacingAndGlyphs'>Ammonium sulphate</text>
-<text x='98.98' y='183.70' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='94.00px' lengthAdjust='spacingAndGlyphs'>Other superphosphates</text>
-<text x='98.98' y='160.59' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='18.50px' lengthAdjust='spacingAndGlyphs'>DAP</text>
-<text x='98.98' y='137.48' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='82.50px' lengthAdjust='spacingAndGlyphs'>Anhydrous ammonia</text>
-<text x='98.98' y='114.37' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='37.50px' lengthAdjust='spacingAndGlyphs'>Other NP</text>
-<text x='98.98' y='91.27' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='12.50px' lengthAdjust='spacingAndGlyphs'>AN</text>
-<text x='98.98' y='68.16' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='57.00px' lengthAdjust='spacingAndGlyphs'>NPK fertilizers</text>
-<text x='98.98' y='45.05' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='20.50px' lengthAdjust='spacingAndGlyphs'>MOP</text>
-<text x='98.98' y='21.94' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>Urea</text>
-<text x='103.91' y='552.21' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='5.00px' lengthAdjust='spacingAndGlyphs'>0</text>
-<text x='202.19' y='552.21' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>20</text>
-<text x='300.47' y='552.21' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>40</text>
-<text x='398.74' y='552.21' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>60</text>
-<text x='296.48' y='568.94' text-anchor='middle' style='font-size: 10.00px;fill: #333333; font-family: "Arimo";' textLength='100.05px' lengthAdjust='spacingAndGlyphs'>Global Production (Mt)</text>
+<g clip-path='url(#cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA=)'>
+<text x='94.00' y='324.63' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='37.50px' lengthAdjust='spacingAndGlyphs'>Other NK</text>
+<text x='94.00' y='310.40' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='58.00px' lengthAdjust='spacingAndGlyphs'>Sodium nitrate</text>
+<text x='94.00' y='296.18' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='49.00px' lengthAdjust='spacingAndGlyphs'>Other K fert.</text>
+<text x='94.00' y='281.95' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='61.00px' lengthAdjust='spacingAndGlyphs'>PK compounds</text>
+<text x='94.00' y='267.72' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.00px' lengthAdjust='spacingAndGlyphs'>SOP</text>
+<text x='94.00' y='253.49' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='49.50px' lengthAdjust='spacingAndGlyphs'>Other N fert.</text>
+<text x='94.00' y='239.27' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='71.75px' lengthAdjust='spacingAndGlyphs'>Superphos. &gt;35%</text>
+<text x='94.00' y='225.04' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='63.50px' lengthAdjust='spacingAndGlyphs'>Fertilizers n.e.c.</text>
+<text x='94.00' y='210.81' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>MAP</text>
+<text x='94.00' y='196.59' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.00px' lengthAdjust='spacingAndGlyphs'>UAN</text>
+<text x='94.00' y='182.36' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='59.25px' lengthAdjust='spacingAndGlyphs'>CAN + CaCO3</text>
+<text x='94.00' y='168.13' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='48.84px' lengthAdjust='spacingAndGlyphs'>Other P fert.</text>
+<text x='94.00' y='153.90' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='62.50px' lengthAdjust='spacingAndGlyphs'>Phosphate rock</text>
+<text x='94.00' y='139.68' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='69.50px' lengthAdjust='spacingAndGlyphs'>Potassium nitrate</text>
+<text x='94.00' y='125.45' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='82.00px' lengthAdjust='spacingAndGlyphs'>Ammonium sulphate</text>
+<text x='94.00' y='111.22' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='94.00px' lengthAdjust='spacingAndGlyphs'>Other superphosphates</text>
+<text x='94.00' y='97.00' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='18.50px' lengthAdjust='spacingAndGlyphs'>DAP</text>
+<text x='94.00' y='82.77' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='82.50px' lengthAdjust='spacingAndGlyphs'>Anhydrous ammonia</text>
+<text x='94.00' y='68.54' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='37.50px' lengthAdjust='spacingAndGlyphs'>Other NP</text>
+<text x='94.00' y='54.31' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='12.50px' lengthAdjust='spacingAndGlyphs'>AN</text>
+<text x='94.00' y='40.09' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='57.00px' lengthAdjust='spacingAndGlyphs'>NPK fertilizers</text>
+<text x='94.00' y='25.86' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='20.50px' lengthAdjust='spacingAndGlyphs'>MOP</text>
+<text x='94.00' y='11.63' text-anchor='end' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>Urea</text>
+<text x='98.93' y='341.19' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='5.00px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='147.18' y='341.19' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>20</text>
+<text x='195.42' y='341.19' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>40</text>
+<text x='243.66' y='341.19' text-anchor='middle' style='font-size: 9.00px;fill: #333333; font-family: "Arimo";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>60</text>
+<text x='193.47' y='357.92' text-anchor='middle' style='font-size: 10.00px;fill: #333333; font-family: "Arimo";' textLength='100.05px' lengthAdjust='spacingAndGlyphs'>Global Production (Mt)</text>
 </g>
 </g>
 </svg>

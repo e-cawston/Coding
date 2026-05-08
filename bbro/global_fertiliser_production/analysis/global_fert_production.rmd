@@ -6,11 +6,17 @@
 # Load required libraries
 library(dplyr)
 library(readr)
+#set here. Make sure to set the working directory to the root of the project first
+library(here)
+library(ggplot2)
+library(scales)
+library(readr)
+library(here)
+library(forcats)
+library(stringr)
+library(RColorBrewer)
 ```
 ```{r}
-#set here. Make sure to set the working directory to the root of the project first with setwd()
-library(here)
-
 # Read the FAOSTAT data
 data <- read_csv(here("raw", "FAOSTAT_data_en_4-28-2026.csv"))
 ```
@@ -73,7 +79,7 @@ my_col_3 <- c("#999999", "#E41A1C", "#B15928", "#FFFF99", "#6A3D9A", "#CAB2D6", 
 
 ## a pie chart of the items by global production
 ```{r}
-library(ggplot2)
+
 
 # Read the manually modified data
 cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
@@ -97,8 +103,7 @@ print(pie_chart)
 
 ## a pie chart of the items by global production with small items (< 2%) grouped into "Other"
 ```{r}
-library(ggplot2)
-library(dplyr)
+
 
 # Read the data
 cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
@@ -132,14 +137,6 @@ print(pie_chart)
 ## a horizontal bar chart of the items by global production
 
 ```{r}
-library(ggplot2)
-library(dplyr)
-library(scales)
-library(readr)
-library(here)
-library(forcats)
-library(stringr)
-
 cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
 
 # 1. Abbreviate labels and reorder
@@ -171,7 +168,7 @@ cleaned_data <- cleaned_data %>%
     TRUE ~ str_trunc(Item, 18)
   )) %>%
   mutate(Item_clean = fct_reorder(Item_clean, Global_Production)) %>%
-  mutate(label_pos = ifelse(Global_Production > max(Global_Production) * 0.15,
+  mutate(label_pos = ifelse(Global_Production > max(Global_Production) * 0.3,
                             "inside", "outside"))
 
 # 2. Use your original palette - assuming my_col_2 exists
@@ -199,7 +196,7 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean)) +
     axis.text.y = element_text(size = 9, color = "grey20"),
     axis.text.x = element_text(size = 9, color = "grey20"),
     axis.title.x = element_text(size = 10, color = "grey20", margin = margin(t = 8)),
-    plot.margin = margin(5, 15, 5, 5)
+    plot.margin = margin(0, 0, 0, 0)
   )
 
 print(bar_chart)
@@ -210,18 +207,10 @@ print(bar_chart)
 
 ## a pie chart of the items by production category (synthetic, non-synthetic, blended, unspecified) - note this requires a new column to be added to the data manually labelling each item as synthetic or not
 ```{r}
-# pie_synthetic_categories.R
-# Makes a pie chart of fertiliser items by Category column
+library(tidyverse)
+library(here)
 
-# Install packages if first time
-# install.packages(c("readr", "dplyr", "ggplot2", "RColorBrewer"))
-
-library(readr)
-library(dplyr)
-library(ggplot2)
-library(RColorBrewer)
-
-# 1. Load data - update path if needed
+# 1. Load data
 cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
 
 # 2. Count categories and calc percentages
@@ -229,14 +218,11 @@ plot_data <- cleaned_data %>%
   count(Category) %>%
   mutate(
     pct = n / sum(n) * 100,
-    pct_label = paste0(round(pct, 1), "%"),
-    cat_label = paste0(Category, "\n", n, " items")
+    pct_label = paste0(round(pct, 1), "%")
   ) %>%
-  arrange(desc(n)) # puts biggest slice first
+  arrange(desc(n))
 
-print(plot_data)
-
-# 3. Set category order + colors for consistency
+# 3. Set category order + colors
 plot_data$Category <- factor(plot_data$Category, 
                              levels = c("Synthetic", "Unspecified", "Non-synthetic", "Blended"))
 
@@ -247,39 +233,40 @@ category_colors <- c(
   "Blended" = "#E78AC3"        
 )
 
-# 4. Build pie chart
+# 4. Build pie chart - only change is hjust in geom_text
 pie_chart <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
   geom_col(width = 1, color = "white", linewidth = 0.5) +
-  coord_polar("y", start = 0) +
+  coord_polar(theta = "y", start = 0) +
   geom_text(aes(label = pct_label), 
-            position = position_stack(vjust = 0.5),
-            color = "black", size = 5, fontface = "bold") +
+            position = position_stack(vjust = 0.3),
+            hjust = -0.50, # pushes text toward outer edge
+            color = "black", size = 4.5, fontface = "bold") +
   scale_fill_manual(values = category_colors) +
   labs(
-    title = "Global Fertiliser Items by Production Category",
     subtitle = paste("n =", sum(plot_data$n), "fertiliser types"),
     fill = "Category"
   ) +
   theme_void(base_size = 12) +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
     plot.subtitle = element_text(hjust = 0.5, size = 11, color = "grey40"),
-    legend.position = "right",
+    legend.position = "bottom",     
+    legend.direction = "vertical",  
+    legend.box = "vertical",         
     legend.title = element_text(face = "bold"),
-    plot.margin = margin(10, 10, 10, 10)
+    legend.box.margin = margin(t = -10),
+    plot.margin = margin(0, 0, 0, 0)
   )
 
-# 5. Display in RStudio/VSCode plots pane
-print(p)
+print(pie_chart)
 ```
-
+    
 ```{r}
 bar_svg_path <- here("analysis", "global_production_bar_chart.svg")
 pie_svg_path <- here("analysis", "synthetic_pie_chart.svg")
 pdf_dir  <- path.expand("~/writing/bbro/lit_review/images")
 # 1. Save SVGs
-ggsave(bar_svg_path, plot = bar_chart, width = 7, height = 8, units = "in", dpi = 600)
-ggsave(pie_svg_path, plot = pie_chart, width = 4, height = 3, units = "in", dpi = 600)
+ggsave(bar_svg_path, plot = bar_chart, width = 4, height = 5, units = "in", dpi = 600)
+ggsave(pie_svg_path, plot = pie_chart, width = 3, height = 6, units = "in", dpi = 600)
 
 # 2. Change to target dir so pdf_tex lands there
 old_wd <- getwd()
@@ -302,7 +289,7 @@ export_svg_to_pdftex <- function(svg_file, pdf_name) {
 
 # 4. Export both
 export_svg_to_pdftex(bar_svg_path, "global_production_bar_chart.pdf")
-export_svg_to_pdftex(pie_svg_path, "global_production_pie_chart.pdf")
+export_svg_to_pdftex(pie_svg_path, "synthetic_pie_chart.pdf")
 
 cat("\nFiles created:\n")
 
