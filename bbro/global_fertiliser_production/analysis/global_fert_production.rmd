@@ -15,6 +15,7 @@ library(here)
 library(forcats)
 library(stringr)
 library(RColorBrewer)
+library(tidyverse)
 ```
 ```{r}
 # Read the FAOSTAT data
@@ -158,7 +159,7 @@ cleaned_data <- cleaned_data %>%
     Item == "Urea and ammonium nitrate solutions (UAN)" ~ "UAN",
     Item == "Monoammonium phosphate (MAP)" ~ "MAP",
     Item == "Fertilizers n.e.c." ~ "Fertilizers n.e.c.",
-    Item == "Superphosphates above 35%" ~ "Superphos. >35%",
+    Item == "Superphosphates above 35%" ~ "Superphos. above 35%",
     Item == "Other nitrogenous fertilizers, n.e.c." ~ "Other N fert.",
     Item == "Potassium sulphate (sulphate of potash) (SOP)" ~ "SOP",
     Item == "PK compounds" ~ "PK compounds",
@@ -177,11 +178,11 @@ bar_chart <- ggplot(cleaned_data, aes(x = Global_Production, y = Item_clean)) +
   geom_col(fill = "#A2DA37FF", color = "white", linewidth = 0.2) +
   # Labels inside bars - now black
   geom_text(data = filter(cleaned_data, label_pos == "inside"),
-            aes(label = label_number(scale = 1e-6, accuracy = 0.1)(Global_Production)),
+            aes(label = label_number(scale = 1e-6, accuracy = 0.0001)(Global_Production)),
             hjust = 1.1, size = 3, color = "black", fontface = "bold") +
   # Labels outside bars  
   geom_text(data = filter(cleaned_data, label_pos == "outside"),
-            aes(label = label_number(scale = 1e-6, accuracy = 0.1)(Global_Production)),
+            aes(label = label_number(scale = 1e-6, accuracy = 0.0001)(Global_Production)),
             hjust = -0.1, size = 3, color = "grey20") +
   theme_minimal(base_size = 11) +
   labs(x = "Global Production (Mt)", y = NULL, title = NULL) + 
@@ -207,24 +208,28 @@ print(bar_chart)
 
 ## a pie chart of the items by production category (synthetic, non-synthetic, blended, unspecified) - note this requires a new column to be added to the data manually labelling each item as synthetic or not
 ```{r}
-library(tidyverse)
-library(here)
-
 # 1. Load data
 cleaned_data <- read_csv(here("raw", "cleaned", "global_production_by_item_modified.csv"))
 
-# 2. Count categories and calc percentages
+# --- Prep data ---
 plot_data <- cleaned_data %>%
-  count(Category) %>%
+  group_by(Category) %>%
+  summarise(total_production = sum(Global_Production, na.rm = TRUE)) %>%
   mutate(
-    pct = n / sum(n) * 100,
+    fraction = total_production / sum(total_production),
+    pct = fraction * 100,
     pct_label = paste0(round(pct, 1), "%")
   ) %>%
-  arrange(desc(n))
+  arrange(desc(fraction)) %>% 
+  mutate(
+    ymax = cumsum(fraction),
+    ymin = c(0, head(ymax, n=-1)),
+    label_y = (ymax + ymin) / 2,
+    label_x = ifelse(Category %in% c("Blended", "Unspecified"), 2.3, 1.5)
+  )
 
-# 3. Set category order + colors
-plot_data$Category <- factor(plot_data$Category, 
-                             levels = c("Synthetic", "Unspecified", "Non-synthetic", "Blended"))
+# Lock factor order
+plot_data$Category <- factor(plot_data$Category, levels = plot_data$Category)
 
 category_colors <- c(
   "Synthetic" = "#66C2A5",      
@@ -233,29 +238,34 @@ category_colors <- c(
   "Blended" = "#E78AC3"        
 )
 
-# 4. Build pie chart - only change is hjust in geom_text
-pie_chart <- ggplot(plot_data, aes(x = "", y = n, fill = Category)) +
-  geom_col(width = 1, color = "white", linewidth = 0.5) +
+# --- Donut chart ---
+pie_chart <- ggplot(plot_data, aes(ymin = ymin, ymax = ymax, xmin = 1, xmax = 2, fill = Category)) +
+  geom_rect(color = "white", linewidth = 0.3) +
   coord_polar(theta = "y", start = 0) +
-  geom_text(aes(label = pct_label), 
-            position = position_stack(vjust = 0.3),
-            hjust = -0.50, # pushes text toward outer edge
-            color = "black", size = 4.5, fontface = "bold") +
+  geom_text(aes(x = label_x, y = label_y, label = pct_label),
+            size = 2.8, fontface = "bold") +
+  geom_segment(data = plot_data %>% filter(Category %in% c("Blended", "Unspecified")),
+               aes(x = 2, xend = 2.2, y = label_y, yend = label_y),
+               color = "grey30", linewidth = 0.3) +
   scale_fill_manual(values = category_colors) +
+  xlim(0.6, 2.4) + 
   labs(
-    subtitle = paste("n =", sum(plot_data$n), "fertiliser types"),
-    fill = "Category"
+    title = paste("Total:", format(round(sum(plot_data$total_production), 0), big.mark = ","), "tonnes"),
+    fill = NULL
   ) +
-  theme_void(base_size = 12) +
+  theme_void(base_size = 8) +
   theme(
-    plot.subtitle = element_text(hjust = 0.5, size = 11, color = "grey40"),
-    legend.position = "bottom",     
-    legend.direction = "vertical",  
-    legend.box = "vertical",         
-    legend.title = element_text(face = "bold"),
-    legend.box.margin = margin(t = -10),
+    plot.title = element_text(hjust = 0.5, size = 7, margin = margin(b = 2)),
+    legend.position = "bottom",
+    legend.direction = "vertical",
+    legend.key.size = unit(0.25, "in"),
+    legend.key.width = unit(0.25, "in"),
+    legend.text = element_text(size = 6),
+    legend.spacing.x = unit(0.1, "in"), # fixes legend smooshing
+    legend.margin = margin(t = -5),
     plot.margin = margin(0, 0, 0, 0)
-  )
+  ) +
+  guides(fill = guide_legend(ncol = 1, bycol = TRUE))
 
 print(pie_chart)
 ```
