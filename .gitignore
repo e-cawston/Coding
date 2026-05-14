@@ -1,6 +1,7 @@
 .Rproj.user
 .RData
 .Rhistory
-raw
-private
+raw/
+!raw/.gitkeep
+private/
 latex/vscode-latex-wsl-setup

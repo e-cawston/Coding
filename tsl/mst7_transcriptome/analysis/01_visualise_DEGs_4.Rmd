@@ -1,0 +1,184 @@
+---
+title: "DEG Visualisation - Sleuth and Rank Products"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
+```
+
+# Load libraries
+```{r}
+library(tidyverse)
+library(here)
+library(ggplot2)
+library(patchwork)
+library(scales)
+```
+
+# Output directory
+```{r}
+fig_dir <- "C:/Users/ges23jir/Documents/Coding/TSL/mst7_transcriptome/Analysis/Data/Figures/DEG_analysis"
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+
+save_plot <- function(plot, filename, width = 10, height = 7) {
+  ggsave(file.path(fig_dir, paste0(filename, ".pdf")),
+         plot, width = width, height = height, device = "pdf")
+  ggsave(file.path(fig_dir, paste0(filename, ".svg")),
+         plot, width = width, height = height, device = "svg")
+  message("Saved: ", filename)
+}
+```
+
+# ── SLEUTH RESULTS ────────────────────────────────────────────────────────────
+
+## Load all sleuth CSVs
+```{r}
+dge_dir <- here("Analysis/Data/DGE")
+
+sleuth_files <- list.files(dge_dir, pattern = "^sleuth_.*\\.csv$", full.names = TRUE)
+
+sleuth_all <- lapply(sleuth_files, function(f) {
+  df <- read_csv(f, col_types = cols())
+  
+  # Parse filename: sleuth_Exp1_8H_MST7WT_vs_Guy11.csv
+  bn <- basename(f) %>% gsub("^sleuth_|.csv$", "", .)
+  parts <- str_split(bn, "_")[[1]]
+  
+  df %>% mutate(
+    experiment  = parts[1],
+    timepoint   = parts[2],
+    condition   = parts[3],
+    control     = parts[5],
+    comparison  = paste0(parts[3], "_vs_", parts[5]),
+    source      = "sleuth"
+  )
+}) %>% bind_rows()
+
+# Classify direction using b (beta = log2 fold change) and qval
+sleuth_all <- sleuth_all %>%
+  mutate(
+    sig       = !is.na(qval) & qval < 0.05,
+    direction = case_when(
+      sig & b > 0 ~ "up",
+      sig & b < 0 ~ "down",
+      TRUE        ~ "ns"
+    ),
+    timepoint_num = as.numeric(gsub("H", "", timepoint))
+  )
+```
+
+## Bar chart: DEG counts per comparison per timepoint (sleuth)
+```{r}
+sleuth_counts <- sleuth_all %>%
+  filter(direction != "ns") %>%
+  count(experiment, comparison, timepoint, timepoint_num, direction) %>%
+  mutate(
+    # Upregulated goes right (positive), downregulated goes left (negative)
+    n_plot    = if_else(direction == "down", -n, n),
+    # Reverse order so 0H is at top, 24H at bottom
+    timepoint = fct_reorder(timepoint, -timepoint_num)
+  )
+
+comparisons <- unique(sleuth_counts$comparison)
+
+plots_sleuth <- lapply(comparisons, function(comp) {
+  df <- sleuth_counts %>% filter(comparison == comp)
+  exp_label <- unique(df$experiment)
+  
+  ggplot(df, aes(y = timepoint, x = n_plot, fill = direction)) +
+    geom_col(width = 0.6) +
+    geom_vline(xintercept = 0, linewidth = 0.4) +
+    scale_fill_manual(values = c(up = "#D62728", down = "#1F77B4"),
+                      labels = c(up = "Upregulated", down = "Downregulated")) +
+    scale_x_continuous(labels = function(x) abs(x)) +
+    labs(
+      title    = paste0("DEGs: ", gsub("_vs_", " vs ", comp)),
+      subtitle = paste0(exp_label, " | sleuth | qval < 0.05"),
+      y        = "Timepoint",
+      x        = "Number of DEGs",
+      fill     = NULL
+    ) +
+    theme_classic(base_size = 12) +
+    theme(
+      plot.title      = element_text(face = "bold"),
+      legend.position = "bottom"
+    )
+})
+names(plots_sleuth) <- comparisons
+
+# Save individual comparison plots
+for (comp in comparisons) {
+  save_plot(plots_sleuth[[comp]],
+            paste0("sleuth_DEG_barplot_", comp))
+}
+```
+
+## Combined overview: all sleuth comparisons faceted
+```{r}
+p_sleuth_overview <- ggplot(sleuth_counts,
+                            aes(y = timepoint, x = n_plot, fill = direction)) +
+  geom_col(width = 0.6) +
+  geom_vline(xintercept = 0, linewidth = 0.3) +
+  scale_fill_manual(values = c(up = "#D62728", down = "#1F77B4"),
+                    labels = c(up = "Up", down = "Down")) +
+  scale_x_continuous(labels = function(x) abs(x)) +
+  facet_wrap(~ comparison, scales = "free_x", ncol = 3) +
+  labs(
+    title = "DEG counts across all sleuth comparisons",
+    y     = "Timepoint",
+    x     = "Number of DEGs (qval < 0.05)",
+    fill  = NULL
+  ) +
+  theme_classic(base_size = 10) +
+  theme(
+    strip.text      = element_text(face = "bold", size = 8),
+    legend.position = "bottom"
+  )
+
+save_plot(p_sleuth_overview, "sleuth_DEG_overview_all_comparisons",
+          width = 16, height = 12)
+```
+
+## Volcano plots for each sleuth comparison × timepoint
+```{r}
+volcano_sleuth <- function(df, comp, tp) {
+  df <- df %>%
+    filter(comparison == comp, timepoint == tp) %>%
+    mutate(
+      log10q   = -log10(pmax(qval, 1e-30)),
+      label    = if_else(sig & abs(b) > 1, target_id, NA_character_)
+    )
+  
+  if (nrow(df) == 0) return(NULL)
+  
+  ggplot(df, aes(x = b, y = log10q, colour = direction)) +
+    geom_point(alpha = 0.5, size = 1) +
+    geom_hline(yintercept = -log10(0.05), linetype = "dashed", colour = "grey50") +
+    geom_vline(xintercept = 0, linewidth = 0.3) +
+    scale_colour_manual(values = c(up = "#D62728", down = "#1F77B4", ns = "grey70"),
+                        guide  = "none") +
+    labs(
+      title    = paste0(gsub("_vs_", " vs ", comp), " | ", tp),
+      subtitle = "sleuth | qval < 0.05",
+      x        = "Beta (log2 fold change)",
+      y        = "-log10(qval)"
+    ) +
+    theme_classic(base_size = 11) +
+    theme(plot.title = element_text(face = "bold"))
+}
+
+for (comp in comparisons) {
+  tps <- unique(sleuth_all$timepoint[sleuth_all$comparison == comp])
+  vol_plots <- lapply(tps, function(tp) volcano_sleuth(sleuth_all, comp, tp))
+  vol_plots <- Filter(Negate(is.null), vol_plots)
+  
+  if (length(vol_plots) == 0) next
+  
+  combined <- wrap_plots(vol_plots, ncol = min(3, length(vol_plots)))
+  save_plot(combined,
+            paste0("sleuth_volcano_", comp),
+            width  = 5 * min(3, length(vol_plots)),
+            height = 5 * ceiling(length(vol_plots) / 3))
+}
+```

@@ -1,0 +1,224 @@
+---
+title: "Direct Comparison: pmk1 vs mst7 and Guy11 vs Guy11M using Rank Products"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
+```
+
+# Load libraries
+```{r}
+library(dplyr)
+library(readr)
+library(sleuth)
+library(here)
+library(tidyverse)
+library(RankProd)
+```
+
+# Load sample metadata
+```{r}
+s2c <- read_csv(here("Raw","results","run_metadata.txt")) %>% 
+  mutate(path = gsub("/abundance.tsv", "", paste0(here("Raw","results"), "/", path)),
+         name = gsub("_0h_\\d$", "", name),
+         sample = paste0(name, "_",  timepoint, "_", biorep),
+         name = factor(name),
+         timepoint = factor(timepoint),
+         biorep = factor(biorep)
+         ) %>%
+  mutate(
+    experiment = if_else(name %in% c("pmk1", "Guy11M"), "Exp2", "Exp1"),
+    experiment = factor(experiment, levels = c("Exp1", "Exp2"))
+  )
+```
+
+# Helper: extract TPM matrix from kallisto outputs for a set of samples
+```{r}
+get_tpm_matrix <- function(s2c_subset) {
+  tpm_list <- lapply(seq_len(nrow(s2c_subset)), function(i) {
+    abund_file <- file.path(s2c_subset$path[i], "abundance.tsv")
+    tpm <- read_tsv(abund_file, col_types = cols()) %>%
+      select(target_id, tpm) %>%
+      rename(!!s2c_subset$sample[i] := tpm)
+    tpm
+  })
+  
+  tpm_mat <- reduce(tpm_list, full_join, by = "target_id")
+  rownames_mat <- tpm_mat$target_id
+  
+  # Drop target_id and force numeric matrix
+  tpm_mat <- tpm_mat %>%
+    select(-target_id) %>%
+    mutate(across(everything(), as.numeric)) %>%
+    as.matrix()
+  
+  rownames(tpm_mat) <- rownames_mat
+  
+  # Sanity checks
+  stopifnot(is.numeric(tpm_mat))
+  stopifnot(ncol(tpm_mat) == nrow(s2c_subset))
+  
+  # Ensure column order matches s2c_subset row order
+  tpm_mat <- tpm_mat[, s2c_subset$sample, drop = FALSE]
+  
+  message("TPM matrix: ", nrow(tpm_mat), " features x ", ncol(tpm_mat), " samples")
+  message("Columns: ", paste(colnames(tpm_mat), collapse = ", "))
+  
+  return(tpm_mat)
+}
+```
+
+# Core rank products function
+```{r}
+run_rank_products <- function(s2c_all,
+                              group1_name,   # treated / "condition" group
+                              group2_name,   # reference / "control" group
+                              timepoint_filter = NULL,
+                              out_dir = here("Analysis/Data/DGE/RankProducts"),
+                              logged = FALSE,   # set TRUE if data already log-transformed
+                              num_perm = 100) {
+  
+  # Filter to just these two strains
+  s2c_sub <- s2c_all %>%
+    filter(name %in% c(group1_name, group2_name))
+  
+  if (!is.null(timepoint_filter)) {
+    s2c_sub <- s2c_sub %>% filter(timepoint == timepoint_filter)
+  }
+  
+  s2c_sub <- s2c_sub %>% droplevels()
+  
+  if (nrow(s2c_sub) == 0) {
+    warning("No samples found for this combination.")
+    return(NULL)
+  }
+  
+  message("Samples included:")
+  print(s2c_sub %>% select(sample, name, timepoint, biorep))
+  
+  # Build TPM matrix
+  tpm_mat <- get_tpm_matrix(s2c_sub)
+  
+  # log2(TPM + 0.5) transform (matches your sleuth transformation)
+  expr_mat <- log2(tpm_mat + 0.5)
+  
+  # Class vector: 1 = group1 (condition), 0 = group2 (reference)
+  # Must use 0/1 for RankProd
+  cl <- ifelse(s2c_sub$name == group1_name, 1, 0)
+  
+  # Origin vector: which experiment each sample comes from
+  origin <- as.integer(s2c_sub$experiment)
+  
+  message("Class vector: ", paste(cl, collapse = ", "))
+  message("Origin vector: ", paste(origin, collapse = ", "))
+  message(
+    "n samples: ", nrow(s2c_sub),
+    "  (", group1_name, ": ", sum(cl == 1),
+    ", ", group2_name, ": ", sum(cl == 0), ")"
+  )
+  
+  # Final checks before RP
+  stopifnot(is.matrix(expr_mat))
+  stopifnot(is.numeric(expr_mat))
+  stopifnot(length(cl) == ncol(expr_mat))
+  message("expr_mat dims: ", nrow(expr_mat), " x ", ncol(expr_mat))
+  message("Class table: "); print(table(cl))
+  
+  # Run Rank Products
+  # gene.names = rownames (transcript/gene IDs)
+  # logged = TRUE because we've already log-transformed
+  # na.rm = TRUE to handle any missing values
+  rp_result <- RP(
+    data       = expr_mat,
+    cl         = cl,
+    num.perm   = num_perm,
+    logged     = TRUE,   # data is log2 transformed
+    na.rm      = TRUE,
+    gene.names = rownames(expr_mat),
+    plot       = FALSE
+  )
+  
+  # topGene returns both directions in one call in this version of RankProd
+  tg <- topGene(rp_result, cutoff = 1, method = "pfp",
+                logged = TRUE, logbase = 2,
+                gene.names = rownames(expr_mat))
+  
+  # Table1 = upregulated in group1, Table2 = upregulated in group2
+  tidy_table <- function(tbl, direction) {
+    if (is.null(tbl) || nrow(tbl) == 0) return(NULL)
+    as.data.frame(tbl) %>%
+      rownames_to_column("target_id") %>%
+      mutate(direction = direction)
+  }
+  
+  res_df <- bind_rows(
+    tidy_table(tg$Table1, paste0("up_in_", group1_name)),
+    tidy_table(tg$Table2, paste0("up_in_", group2_name))
+  ) %>%
+    arrange(pfp)
+  
+  # Save
+  tp_str <- if (!is.null(timepoint_filter)) paste0(timepoint_filter, "H_") else ""
+  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  out_file <- file.path(out_dir,
+                        paste0("rankprod_", tp_str,
+                               group1_name, "_vs_", group2_name, ".csv"))
+  write_csv(res_df, out_file)
+  message("Results written to: ", out_file)
+  
+  return(res_df)
+}
+```
+
+# Run comparisons per timepoint
+```{r}
+timepoints <- levels(s2c$timepoint)
+
+# --- pmk1 vs mst7 ---
+# pmk1 is Exp2, mst7 is Exp1 -- they come from separate experiments
+# Rank products handles this via the origin vector (experiment membership)
+results_pmk1_vs_mst7 <- lapply(timepoints, function(tp) {
+  message("\n=== pmk1 vs mst7 | Timepoint: ", tp, "H ===")
+  run_rank_products(
+    s2c_all         = s2c,
+    group1_name     = "pmk1",
+    group2_name     = "mst7",
+    timepoint_filter = tp
+  )
+})
+names(results_pmk1_vs_mst7) <- timepoints
+
+# --- Guy11 vs Guy11M ---
+# Guy11 is Exp1, Guy11M is Exp2 -- again separate experiments
+results_Guy11_vs_Guy11M <- lapply(timepoints, function(tp) {
+  message("\n=== Guy11 vs Guy11M | Timepoint: ", tp, "H ===")
+  run_rank_products(
+    s2c_all         = s2c,
+    group1_name     = "Guy11",
+    group2_name     = "Guy11M",
+    timepoint_filter = tp
+  )
+})
+names(results_Guy11_vs_Guy11M) <- timepoints
+```
+
+# Quick summary of significant hits (pfp < 0.05)
+```{r}
+summarise_hits <- function(res_list, comparison_label, pfp_cutoff = 0.05) {
+  message("\n--- ", comparison_label, " ---")
+  for (tp in names(res_list)) {
+    res <- res_list[[tp]]
+    if (is.null(res) || nrow(res) == 0) {
+      message("Timepoint ", tp, "H: no results")
+      next
+    }
+    sig <- res %>% filter(pfp < pfp_cutoff)
+    message("Timepoint ", tp, "H: ", nrow(sig), " significant genes (pfp < ", pfp_cutoff, ")")
+    if (nrow(sig) > 0) print(head(sig, 10))
+  }
+}
+
+summarise_hits(results_pmk1_vs_mst7,   "pmk1 vs mst7")
+summarise_hits(results_Guy11_vs_Guy11M, "Guy11 vs Guy11M")
+```
