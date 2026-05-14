@@ -1,0 +1,24 @@
+Item,Item Code,Year,Unit,Element,Element Code,Global_Production,Number_of_Countries,Category
+Urea,4001,2023,TRUE,Production,5510,66423453.75,30,Synthetic
+Potassium chloride (muriate of potash) (MOP),4016,2023,TRUE,Production,5510,37503781.7,19,Non-synthetic
+NPK fertilizers,4021,2023,TRUE,Production,5510,27159006.76,27,Synthetic
+Ammonium nitrate (AN),4003,2023,TRUE,Production,5510,15317041.13,22,Synthetic
+Other NP compounds,4024,2023,TRUE,Production,5510,14197148.71,20,Unspecified
+"Ammonia, anhydrous",4007,2023,TRUE,Production,5510,11763326,21,Synthetic
+Diammonium phosphate (DAP),4022,2023,TRUE,Production,5510,11034290.46,23,Synthetic
+"Superphosphates, other",4013,2023,TRUE,Production,5510,9850432.52,20,Blended
+Ammonium sulphate,4002,2023,TRUE,Production,5510,6445552.14,26,Synthetic
+Potassium nitrate,4025,2023,TRUE,Production,5510,6347255.25,21,Synthetic
+Phosphate rock,4011,2023,TRUE,Production,5510,5358047,16,Non-synthetic
+"Other phosphatic fertilizers, n.e.c.",4014,2023,TRUE,Production,5510,4494150,18,Unspecified
+Calcium ammonium nitrate (CAN) and other mixtures with calcium carbonate,4004,2023,TRUE,Production,5510,3647574.35,20,Blended
+Urea and ammonium nitrate solutions (UAN),4006,2023,TRUE,Production,5510,3350296.71,21,Synthetic
+Monoammonium phosphate (MAP),4023,2023,TRUE,Production,5510,1008839.13,21,Synthetic
+Fertilizers n.e.c.,4030,2023,TRUE,Production,5510,891037.35,19,Unspecified
+Superphosphates above 35%,4012,2023,TRUE,Production,5510,839879,22,Synthetic
+"Other nitrogenous fertilizers, n.e.c.",4008,2023,TRUE,Production,5510,328387.64,20,Unspecified
+Potassium sulphate (sulphate of potash) (SOP),4017,2023,TRUE,Production,5510,123947.08,21,Non-synthetic
+PK compounds,4027,2023,TRUE,Production,5510,114441.62,19,Synthetic
+"Other potassic fertilizers, n.e.c.",4018,2023,TRUE,Production,5510,80215.28,16,Unspecified
+Sodium nitrate,4005,2023,TRUE,Production,5510,25168.1,19,Synthetic
+Other NK compounds,4026,2023,TRUE,Production,5510,148.33,15,Unspecified
