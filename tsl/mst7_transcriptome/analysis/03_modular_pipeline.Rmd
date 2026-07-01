@@ -1,0 +1,128 @@
+---
+title: "Modular RNA-seq pipeline for mst7 transcriptome"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
+```
+
+# Overview
+
+This document runs the modular RNA-seq workflow for the mst7 transcriptome project. It reads the sample metadata, sources the reusable analysis scripts, runs sleuth-based DGE comparisons from the comparison table, generates DEG summary plots, creates upset plots, and generates correlation matrices.
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(dplyr)
+library(readr)
+library(purrr)
+library(tidyr)
+library(stringr)
+library(tibble)
+library(here)
+library(ggplot2)
+library(reshape2)
+```
+
+```{r paths}
+project_dir <- here::here()
+analysis_dir <- file.path(project_dir, "analysis")
+scripts_dir <- file.path(analysis_dir, "scripts")
+results_dir <- file.path(project_dir, "results")
+fig_dir <- file.path(results_dir, "figures")
+tables_dir <- file.path(results_dir, "tables")
+dge_dir <- file.path(results_dir, "dge")
+upset_dir <- file.path(fig_dir, "upset")
+cor_dir <- file.path(fig_dir, "correlation")
+
+for (dir_path in c(fig_dir, tables_dir, dge_dir, upset_dir, cor_dir)) {
+  dir.create(dir_path, recursive = TRUE, showWarnings = FALSE)
+}
+```
+
+```{r source-scripts}
+source(file.path(scripts_dir, "comparison_table.R"))
+source(file.path(scripts_dir, "upset_functions.R"))
+source(file.path(scripts_dir, "correlation_functions.R"))
+source(file.path(scripts_dir, "dge_functions.R"))
+source(file.path(scripts_dir, "rank_products_functions.R"))
+```
+
+```{r metadata}
+s2c <- read_csv(file.path(project_dir, "raw", "run_metadata.txt"), show_col_types = FALSE) %>%
+  mutate(
+    path = file.path(project_dir, "raw", path),
+    name = str_remove(name, "_0h_\\d+$"),
+    sample = paste0(name, "_", timepoint, "_", biorep),
+    name = factor(name),
+    timepoint = factor(timepoint),
+    biorep = factor(biorep)
+  ) %>%
+  mutate(
+    experiment = if_else(name %in% c("pmk1", "Guy11M"), "Exp2", "Exp1"),
+    experiment = factor(experiment, levels = c("Exp1", "Exp2"))
+  )
+```
+
+# Sleuth differential expression
+
+```{r run-dge, message=FALSE, warning=FALSE}
+dge_results <- run_comparisons(s2c, comparisons, out_dir = dge_dir)
+```
+
+```{r dge-summary-plots}
+for (lab in unique(dge_results$comparison_label)) {
+  if (!is.na(lab) && nzchar(lab)) {
+    plot_dge_summary(dge_results, lab, out_dir = fig_dir)
+  }
+}
+```
+
+# Upset plots
+
+```{r upset-plots}
+deg_sets <- load_deg_tables(
+  comparison_labels = comparisons$label,
+  dge_dir = dge_dir,
+  qval_threshold = 0.05,
+  fc_threshold = 0
+)
+
+plot_upset(deg_sets, label = "all_comparisons", out_dir = upset_dir)
+```
+
+# Correlation matrices
+
+```{r correlation-matrices}
+tpm_matrix <- load_tpm_matrix(file.path(project_dir, "raw", "all_samples_tpm_matrix.txt"))
+
+cor_matrix_all(tpm_matrix, s2c)
+cor_matrix_exp1(tpm_matrix, s2c)
+cor_matrix_exp2(tpm_matrix, s2c)
+cor_matrix_key_strains(tpm_matrix, s2c)
+```
+
+# Rank-products plots
+
+```{r rank-products}
+rp_results <- run_rank_products_comparisons(s2c, comparisons, out_dir = file.path(results_dir, "rank_products"))
+
+for (lab in unique(rp_results$comparison_label)) {
+  if (!is.na(lab) && nzchar(lab)) {
+    plot_rank_products_mirrored(
+      rp_results,
+      lab,
+      out_dir = file.path(fig_dir, "rank_products")
+    )
+  }
+}
+```
+
+# Session info
+
+```{r session-info}
+sessionInfo()
+```
